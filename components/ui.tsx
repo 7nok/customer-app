@@ -1,0 +1,434 @@
+import type { ComponentProps, ReactNode } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type StyleProp,
+  type TextInputProps,
+  type ViewStyle,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { Icon } from '@/components/icon';
+import { colors, radius, spacing } from '@/constants/theme';
+
+export function Screen({
+  children,
+  scroll = true,
+  padded = true,
+}: {
+  children: ReactNode;
+  scroll?: boolean;
+  padded?: boolean;
+}) {
+  const body = (
+    <View style={[styles.screenInner, padded && styles.screenPad]}>{children}</View>
+  );
+
+  if (!scroll) {
+    return (
+      <SafeAreaView style={styles.screen} edges={['left', 'right']}>
+        {body}
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.screen} edges={['left', 'right']}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
+        {body}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+export function PageIntro({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+}) {
+  return (
+    <View style={styles.intro}>
+      {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
+      <Text style={styles.title}>{title}</Text>
+      {body ? <Text style={styles.introBody}>{body}</Text> : null}
+    </View>
+  );
+}
+
+export function Card({
+  children,
+  style,
+  onPress,
+}: {
+  children: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  onPress?: () => void;
+}) {
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.card, style, pressed && styles.pressed]}>
+        {children}
+      </Pressable>
+    );
+  }
+  return <View style={[styles.card, style]}>{children}</View>;
+}
+
+export function PrimaryButton({
+  title,
+  onPress,
+  disabled,
+  loading,
+}: {
+  title: string;
+  onPress: () => void;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
+  const isDisabled = disabled || loading;
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={isDisabled}
+      style={({ pressed }) => [
+        styles.primary,
+        isDisabled && styles.disabled,
+        pressed && !isDisabled && styles.pressed,
+      ]}>
+      {loading ? (
+        <ActivityIndicator color={colors.navy} />
+      ) : (
+        <Text style={styles.primaryLabel}>{title}</Text>
+      )}
+    </Pressable>
+  );
+}
+
+export function SecondaryButton({
+  title,
+  onPress,
+  disabled,
+}: {
+  title: string;
+  onPress: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => [
+        styles.secondary,
+        disabled && styles.disabled,
+        pressed && !disabled && styles.pressed,
+      ]}>
+      <Text style={styles.secondaryLabel}>{title}</Text>
+    </Pressable>
+  );
+}
+
+export function Field({
+  label,
+  hint,
+  ...inputProps
+}: TextInputProps & { label: string; hint?: string }) {
+  return (
+    <View style={styles.field}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      <TextInput
+        placeholderTextColor={colors.muted}
+        style={[styles.input, inputProps.multiline && styles.multiline]}
+        {...inputProps}
+      />
+      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+    </View>
+  );
+}
+
+export function Banner({
+  tone = 'info',
+  children,
+}: {
+  tone?: 'info' | 'warn' | 'success';
+  children: ReactNode;
+}) {
+  const palette = {
+    info: { bg: colors.cardWarm, fg: colors.text },
+    warn: { bg: colors.warnSoft, fg: colors.warn },
+    success: { bg: colors.successSoft, fg: colors.success },
+  }[tone];
+
+  return (
+    <View style={[styles.banner, { backgroundColor: palette.bg }]}>
+      <Text style={[styles.bannerText, { color: palette.fg }]}>{children}</Text>
+    </View>
+  );
+}
+
+export function ListRow({
+  title,
+  subtitle,
+  onPress,
+  icon,
+}: {
+  title: string;
+  subtitle?: string;
+  onPress?: () => void;
+  icon?: IconName;
+}) {
+  const content = (
+    <>
+      {icon ? (
+        <View style={styles.rowIcon}>
+          <Icon name={icon} color={colors.amberDeep} size={20} />
+        </View>
+      ) : null}
+      <View style={styles.rowCopy}>
+        <Text style={styles.rowTitle}>{title}</Text>
+        {subtitle ? <Text style={styles.rowSubtitle}>{subtitle}</Text> : null}
+      </View>
+      {onPress ? <Icon name="chevron-forward" color={colors.muted} size={18} /> : null}
+    </>
+  );
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+        {content}
+      </Pressable>
+    );
+  }
+
+  return <View style={styles.row}>{content}</View>;
+}
+
+type IconName = ComponentProps<typeof Icon>['name'];
+
+export function Chip({
+  label,
+  selected,
+  onPress,
+  disabled,
+}: {
+  label: string;
+  selected?: boolean;
+  onPress?: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled || !onPress}
+      style={({ pressed }) => [
+        styles.chip,
+        selected && styles.chipSelected,
+        disabled && styles.chipDisabled,
+        pressed && !disabled && styles.pressed,
+      ]}>
+      <Text style={[styles.chipLabel, selected && styles.chipLabelSelected]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+export function EmptyState({
+  title,
+  body,
+  action,
+}: {
+  title: string;
+  body: string;
+  action?: ReactNode;
+}) {
+  return (
+    <Card>
+      <Text style={styles.rowTitle}>{title}</Text>
+      <Text style={[styles.rowSubtitle, { marginTop: 6 }]}>{body}</Text>
+      {action ? <View style={{ marginTop: spacing.md }}>{action}</View> : null}
+    </Card>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.bg,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 36,
+  },
+  screenInner: {
+    flexGrow: 1,
+    gap: spacing.md,
+  },
+  screenPad: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+  },
+  intro: {
+    gap: 6,
+    marginBottom: 4,
+  },
+  eyebrow: {
+    color: colors.amberDeep,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  title: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: '700',
+    letterSpacing: -0.4,
+  },
+  introBody: {
+    color: colors.muted,
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: colors.card,
+    borderColor: colors.line,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    padding: spacing.md,
+    gap: 8,
+  },
+  pressed: {
+    opacity: 0.82,
+  },
+  primary: {
+    alignItems: 'center',
+    backgroundColor: colors.amber,
+    borderRadius: radius.sm,
+    minHeight: 52,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+  },
+  primaryLabel: {
+    color: colors.navy,
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  secondary: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.line,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    minHeight: 48,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+  },
+  secondaryLabel: {
+    color: colors.navy,
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  disabled: {
+    opacity: 0.45,
+  },
+  field: {
+    gap: 6,
+  },
+  fieldLabel: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  input: {
+    backgroundColor: colors.white,
+    borderColor: colors.line,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    color: colors.text,
+    fontSize: 16,
+    minHeight: 48,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  multiline: {
+    minHeight: 110,
+    textAlignVertical: 'top',
+  },
+  hint: {
+    color: colors.muted,
+    fontSize: 13,
+  },
+  banner: {
+    borderRadius: radius.sm,
+    padding: spacing.md,
+  },
+  bannerText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  row: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    paddingVertical: 4,
+  },
+  rowIcon: {
+    alignItems: 'center',
+    backgroundColor: colors.amberSoft,
+    borderRadius: 10,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  rowCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  rowSubtitle: {
+    color: colors.muted,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  chip: {
+    backgroundColor: colors.card,
+    borderColor: colors.line,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  chipSelected: {
+    backgroundColor: colors.navy,
+    borderColor: colors.navy,
+  },
+  chipDisabled: {
+    opacity: 0.4,
+  },
+  chipLabel: {
+    color: colors.text,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  chipLabelSelected: {
+    color: colors.cream,
+  },
+});
