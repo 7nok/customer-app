@@ -3,12 +3,25 @@
  * Serve the Expo static export the way GitHub Pages will:
  * http://localhost:4173 plus the project baseUrl (see app.json).
  */
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const PREFIX = '/joes-app';
+function pagesPrefix() {
+  try {
+    const app = JSON.parse(readFileSync(new URL('../app.json', import.meta.url), 'utf8'));
+    const baseUrl = app?.expo?.experiments?.baseUrl;
+    if (typeof baseUrl === 'string' && baseUrl.startsWith('/')) {
+      return baseUrl.replace(/\/$/, '') || '';
+    }
+  } catch {
+    // Keep the Pages project path if app.json cannot be read.
+  }
+  return '/customer-app';
+}
+
+const PREFIX = pagesPrefix();
 const PORT = Number(process.env.PORT || 4173);
 const DIST = resolve(fileURLToPath(new URL('..', import.meta.url)), 'dist');
 

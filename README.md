@@ -67,25 +67,22 @@ npm run preview:pages
 
 ## GitHub Pages
 
-After Pages is enabled, the site is served at `https://<github-owner>.github.io/<repo>/`.
+Live site: [https://7nok.github.io/customer-app/](https://7nok.github.io/customer-app/).
 
-The site is a static Expo export (`npx expo export --platform web`). The project `baseUrl` must match the repository name so assets resolve on project Pages. Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+The site is a static Expo export (`npx expo export --platform web`), not the README. `experiments.baseUrl` in `app.json` is `/customer-app` so assets resolve on project Pages. Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 
 - Every pull request **exports** the website (and typechecks) so the build stays green.
 - Pushes to `main` (or a manual **Actions → GitHub Pages → Run workflow**) **deploy** the `dist` folder with the official `github-pages` action.
 
-### Enable Pages
+### Pages source
 
-This repository is **private**. GitHub Pages on a private repo needs **GitHub Pro** (or make the repo public). After that:
+Repo **Settings → Pages** must use **GitHub Actions** (not “Deploy from a branch”). A branch source publishes a Jekyll build of the README instead of the Expo export.
 
-1. Repo **Settings → Pages**.
-2. Set **Source** to **GitHub Actions** (not “Deploy from a branch”).
-3. Merge to `main` or run the **GitHub Pages** workflow.
-4. The first successful deploy publishes the Pages URL for this repo.
+1. Confirm **Source** is **GitHub Actions**.
+2. Push to `main` or run the **GitHub Pages** workflow.
+3. The first successful Actions deploy publishes the Expo site at the URL above.
 
-Until that source is set (and the plan allows Pages), the workflow still proves the web build; the deploy job may fail or stay idle.
-
-A `.nojekyll` file is included so GitHub does not ignore Expo’s `_expo` folders.
+A `.nojekyll` file is written into `dist/` so GitHub does not ignore Expo’s `_expo` folders.
 
 ## Placeholders in the running app
 
