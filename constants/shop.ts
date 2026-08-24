@@ -1,0 +1,25 @@
+export const shop = {
+  name: "Joe's",
+  legalName: "Joe's Mechanic Shop",
+  city: 'Hillsboro',
+  state: 'TX',
+  region: 'Hill County',
+  locationLabel: 'Hillsboro, Texas',
+  mapsQuery: 'Hillsboro, Texas',
+  phone: '+1 (254) 555-0100',
+  phoneTel: '+12545550100',
+  phoneNote: 'Placeholder number — replace with Joe’s real shop line.',
+  tagline: 'Honest work for cars and trucks in Hillsboro.',
+  placeholderBio: [
+    '[PLACEHOLDER — replace with Joe’s own words]',
+    'I’m Joe. I opened this shop in Hillsboro to take care of neighbors’ cars and trucks the way I’d want mine treated: straight talk, careful work, and no runaround.',
+    'We handle everyday vehicle work — inspections, fluids, brakes, diagnostics, and the repairs that keep you moving around Hill County and up I-35.',
+    'This short bio is starter copy so the About page has a voice. Joe can swap it for his real story anytime.',
+  ],
+  workList: [
+    'General repairs on cars and trucks',
+    'Maintenance and inspections',
+    'Brakes, fluids, and common wear items',
+    'Diagnostics when something does not feel right',
+  ],
+};
