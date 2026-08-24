@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Serve the Expo static export the way GitHub Pages will:
- * https://7nok.github.io/joes-app/  →  http://localhost:4173/joes-app/
+ * http://localhost:4173 plus the project baseUrl (see app.json).
  */
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';

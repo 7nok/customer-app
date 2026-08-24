@@ -1,19 +1,21 @@
-# Joe’s
+# Customer shop app
 
-Customer app and website for **Joe’s**, a starter mechanic shop in Hillsboro, Texas. Customers can book a visit, look up general maintenance intervals, join a local loyalty list, and read about the shop.
+Customer-facing mechanic shop app and website: book a visit, look up general maintenance intervals, join a local loyalty list, and read about the shop.
 
-This is one [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction/) + TypeScript product. The same screens run in **Expo Go** on iPhone and Android, and as a **static website** for GitHub Pages. There is no backend, payments, or SMS in v1 — appointments, the loyalty account, and Joe’s weekly hours are stored on the device (or in the browser) with AsyncStorage.
+This is one [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction/) + TypeScript product. The same screens run in **Expo Go** on iPhone and Android, and as a **static website** for GitHub Pages. There is no backend, payments, or SMS in v1 — appointments, the loyalty account, and weekly hours are stored on the device (or in the browser) with AsyncStorage.
+
+Shop name, location, and contact copy that customers see live in the running app, not in this README.
 
 ## Screens
 
 | Area | What it does |
 | --- | --- |
 | **Home** | Shop intro and shortcuts to Book, Maintenance, Loyalty, and About. Shows the next booked visit when one exists. |
-| **Book** | Collects vehicle year / make / model and a concern note. Customers pick from Joe’s open weekly slots. Confirmation stays on this device. |
-| **Shop hours** | Light owner tools so Joe can turn hourly slots on or off for each weekday. Customers only see those times for the next two weeks. |
+| **Book** | Collects vehicle year / make / model and a concern note. Customers pick from the shop’s open weekly slots. Confirmation stays on this device. |
+| **Shop hours** | Light owner tools to turn hourly slots on or off for each weekday. Customers only see those times for the next two weeks. |
 | **Maintenance** | Guide flow: Maintenance → Car or Truck → category (fluids, brakes, engine, …) → item (e.g. brake fluid) → typical interval. Labeled as general recommendations. |
 | **Loyalty** | Sign up with name, email, and vehicles. Confirmation after save. Account can be updated or removed on this device. |
-| **About** | Placeholder bio (clearly marked for Joe to replace), Hillsboro location, weekly hours, and a labeled placeholder phone number. |
+| **About** | Shop story (placeholder copy in the app, clearly marked), location, weekly hours, and a labeled placeholder phone number. |
 
 No dollar prices or customer reviews are shown.
 
@@ -61,43 +63,39 @@ npm run export:web
 npm run preview:pages
 ```
 
-`preview:pages` builds `dist/` and serves it at [http://localhost:4173/joes-app/](http://localhost:4173/joes-app/) — the same `/joes-app` base path Pages will use.
+`preview:pages` builds `dist/` and serves it under the configured Pages base path (see `experiments.baseUrl` in `app.json`) at `http://localhost:4173` plus that path.
 
 ## GitHub Pages
 
-**Live URL (once Pages is on):** [https://7nok.github.io/joes-app/](https://7nok.github.io/joes-app/)
+After Pages is enabled, the site is served at `https://<github-owner>.github.io/<repo>/`.
 
-The site is a static Expo export (`npx expo export --platform web`) with `experiments.baseUrl` set to `/joes-app`. GitHub Actions workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+The site is a static Expo export (`npx expo export --platform web`). The project `baseUrl` must match the repository name so assets resolve on project Pages. Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 
 - Every pull request **exports** the website (and typechecks) so the build stays green.
 - Pushes to `main` (or a manual **Actions → GitHub Pages → Run workflow**) **deploy** the `dist` folder with the official `github-pages` action.
 
-### Manual toggle Preston needs
+### Enable Pages
 
 This repository is **private**. GitHub Pages on a private repo needs **GitHub Pro** (or make the repo public). After that:
 
 1. Repo **Settings → Pages**.
 2. Set **Source** to **GitHub Actions** (not “Deploy from a branch”).
 3. Merge to `main` or run the **GitHub Pages** workflow.
-4. The first successful deploy publishes [https://7nok.github.io/joes-app/](https://7nok.github.io/joes-app/).
+4. The first successful deploy publishes the Pages URL for this repo.
 
 Until that source is set (and the plan allows Pages), the workflow still proves the web build; the deploy job may fail or stay idle.
 
 A `.nojekyll` file is included so GitHub does not ignore Expo’s `_expo` folders.
 
-## Placeholders to replace later
+## Placeholders in the running app
 
-- About page bio is marked `[PLACEHOLDER — replace with Joe’s own words]`.
-- Phone is a labeled fake number: `+1 (254) 555-0100`.
-- Shop hours start as a sensible Tue–Fri / Saturday-morning week. Joe can edit them in **About → Joe: set available times** or from Home.
+- The About bio is marked as placeholder copy so it can be replaced later.
+- The shop phone in the app is a labeled placeholder, not a real line.
+- Shop hours start as a sensible weekday / Saturday-morning week and can be edited from About or Home.
 
 ## What this version does not do
 
-- No server, so Joe does not get a push, SMS, or email when someone books.
+- No server, so the shop does not get a push, SMS, or email when someone books.
 - No payments or estimates.
 - The hours editor is not locked behind a password.
 - Website data lives in that browser’s storage, separate from Expo Go on a phone.
-
-## License
-
-Private shop app for Joe’s in Hillsboro, TX.
