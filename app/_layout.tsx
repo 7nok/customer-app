@@ -39,7 +39,11 @@ function RootNavigation() {
   return (
     <>
       <Head>
-        <title>Joe’s</title>
+        <title>Joe’s · Hillsboro, TX</title>
+        <meta
+          name="description"
+          content="Customer site and app for Joe’s mechanic shop in Hillsboro, Texas. Book a visit, check maintenance intervals, and join the shop list."
+        />
       </Head>
       <Stack
         screenOptions={{

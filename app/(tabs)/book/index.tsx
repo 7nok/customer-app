@@ -106,7 +106,7 @@ export default function BookScreen() {
         <PageIntro
           eyebrow="Appointments"
           title="Book a time with Joe"
-          body="Choose an open slot, tell us about the vehicle, and describe what is going on. This stays on your phone for now — no payments or texts yet."
+          body="Choose an open slot, tell us about the vehicle, and describe what is going on. This stays on this device for now — no payments or texts yet."
         />
 
         {upcomingAppointments.length > 0 ? (
@@ -125,7 +125,7 @@ export default function BookScreen() {
                 <SecondaryButton
                   title="Cancel"
                   onPress={() =>
-                    Alert.alert('Cancel this visit?', 'The slot will open back up on this phone.', [
+                    Alert.alert('Cancel this visit?', 'The slot will open back up on this device.', [
                       { text: 'Keep it', style: 'cancel' },
                       {
                         text: 'Cancel visit',
@@ -198,13 +198,13 @@ export default function BookScreen() {
         <Card>
           <Text style={styles.sectionTitle}>Open times</Text>
           <Text style={styles.muted}>
-            Times follow Joe’s weekly availability and hide slots already booked on this phone.
+            Times follow Joe’s weekly availability and hide slots already booked on this device.
             Shop is in Hillsboro, TX (Central Time).
           </Text>
           {bookableSlots.length === 0 ? (
             <EmptyState
               title="No open slots right now"
-              body="Joe may be fully booked on this phone, or weekly hours need an update."
+              body="Joe may be fully booked on this device, or weekly hours need an update."
               action={
                 <SecondaryButton
                   title="Review shop hours"
@@ -271,8 +271,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   visit: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: 'stretch',
+    flexDirection: 'column',
     gap: 10,
   },
   visitWhen: {

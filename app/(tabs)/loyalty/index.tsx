@@ -23,7 +23,7 @@ export default function LoyaltyScreen() {
         <PageIntro
           eyebrow="Shop list"
           title="Join Joe’s loyalty list"
-          body="Leave your name, email, and vehicles on this phone. No points, no fake discounts — just a local account so the shop has your info."
+          body="Leave your name, email, and vehicles on this device. No points, no fake discounts — just a local account so the shop has your info."
         />
         <Banner>
           This first version saves only on your device. There is no cloud login yet.
@@ -68,13 +68,13 @@ export default function LoyaltyScreen() {
       </Card>
 
       <Banner>
-        Saved on this phone only. Clearing the app storage or tapping remove will delete the
+        Saved on this device only. Clearing the app storage or tapping remove will delete the
         account here.
       </Banner>
 
       <PrimaryButton title="Update account" onPress={() => router.push('/loyalty/signup')} />
       <SecondaryButton
-        title="Remove from this phone"
+        title="Remove from this device"
         onPress={() =>
           Alert.alert(
             'Remove this account?',

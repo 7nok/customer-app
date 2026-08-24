@@ -37,7 +37,7 @@ export default function AvailabilityScreen() {
       <PageIntro
         eyebrow="Shop owner"
         title="Joe’s available times"
-        body="Tap hours to open or close them. Customers only see these weekly slots for the next three weeks, minus anything already booked on this phone."
+        body="Tap hours to open or close them. Customers only see these weekly slots for the next two weeks, minus anything already booked on this device."
       />
 
       <Banner tone="warn">

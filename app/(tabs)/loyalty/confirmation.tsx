@@ -13,7 +13,7 @@ export default function LoyaltyConfirmationScreen() {
   if (!profile) {
     return (
       <Screen>
-        <PageIntro title="No account on this phone yet" />
+        <PageIntro title="No account on this device yet" />
         <PrimaryButton title="Sign up" onPress={() => router.replace('/loyalty/signup')} />
       </Screen>
     );
