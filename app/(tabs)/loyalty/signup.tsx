@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import {
   Banner,
@@ -76,10 +76,16 @@ export default function LoyaltySignupScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Screen>
+    <Screen
+      footer={
+        <PrimaryButton
+          title={isEdit ? 'Save account' : 'Create account'}
+          onPress={() => {
+            void onSave();
+          }}
+          loading={saving}
+        />
+      }>
         <PageIntro
           eyebrow={isEdit ? 'Update account' : 'Loyalty signup'}
           title={isEdit ? 'Keep your info current' : 'Tell Joe who you are'}
@@ -105,7 +111,7 @@ export default function LoyaltySignupScreen() {
                 label="Year"
                 value={vehicle.year}
                 onChangeText={(year) => updateVehicle(vehicle.key, { year })}
-                keyboardType="number-pad"
+                keyboardType="numeric"
                 maxLength={4}
                 placeholder="2018"
               />
@@ -139,17 +145,7 @@ export default function LoyaltySignupScreen() {
         />
 
         {error ? <Banner tone="warn">{error}</Banner> : null}
-
-        <PrimaryButton
-          title={isEdit ? 'Save account' : 'Create account'}
-          onPress={() => {
-            void onSave();
-          }}
-          disabled={!canSave}
-          loading={saving}
-        />
       </Screen>
-    </KeyboardAvoidingView>
   );
 }
 

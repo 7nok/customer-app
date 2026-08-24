@@ -1,5 +1,6 @@
 import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
 import { Stack } from 'expo-router';
+import Head from 'expo-router/head';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
@@ -37,6 +38,9 @@ function RootNavigation() {
 
   return (
     <>
+      <Head>
+        <title>Joe’s</title>
+      </Head>
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.navy },

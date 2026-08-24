@@ -1,7 +1,7 @@
 import type { Appointment, BookableSlot, WeeklySlot } from '@/lib/types';
 import { addHour, toIsoDate } from '@/lib/format';
 
-const LOOKAHEAD_DAYS = 21;
+const LOOKAHEAD_DAYS = 14;
 
 function isPastToday(start: string): boolean {
   const now = new Date();

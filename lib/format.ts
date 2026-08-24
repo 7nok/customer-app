@@ -52,9 +52,35 @@ export function isValidEmail(value: string): boolean {
 }
 
 export function isValidYear(value: string): boolean {
-  const year = Number(value);
+  const year = Number(value.trim());
   const max = new Date().getFullYear() + 1;
   return Number.isInteger(year) && year >= 1970 && year <= max;
+}
+
+export function bookingGaps(input: {
+  year: string;
+  make: string;
+  model: string;
+  notes: string;
+  hasSlot: boolean;
+}): string[] {
+  const gaps: string[] = [];
+  if (!isValidYear(input.year)) {
+    gaps.push('a 4-digit vehicle year');
+  }
+  if (input.make.trim().length < 2) {
+    gaps.push('the vehicle make');
+  }
+  if (input.model.trim().length < 2) {
+    gaps.push('the vehicle model');
+  }
+  if (input.notes.trim().length < 2) {
+    gaps.push('a short note about the concern');
+  }
+  if (!input.hasSlot) {
+    gaps.push('an open time');
+  }
+  return gaps;
 }
 
 export function vehicleLabel(year: string, make: string, model: string): string {

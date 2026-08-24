@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import {
   Banner,
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
-import { formatDate, formatTime, isValidYear, vehicleLabel } from '@/lib/format';
+import { bookingGaps, formatDate, formatTime, vehicleLabel } from '@/lib/format';
 import type { BookableSlot, Vehicle } from '@/lib/types';
 
 export default function BookScreen() {
@@ -32,6 +32,7 @@ export default function BookScreen() {
     profile?.vehicles[0]?.id ?? null,
   );
   const [submitting, setSubmitting] = useState(false);
+  const [attempted, setAttempted] = useState(false);
 
   const selectedVehicle = profile?.vehicles.find((item) => item.id === selectedVehicleId) ?? null;
   const usingSavedVehicle = Boolean(selectedVehicle);
@@ -43,12 +44,14 @@ export default function BookScreen() {
   const effectiveMake = usingSavedVehicle ? selectedVehicle!.make : make;
   const effectiveModel = usingSavedVehicle ? selectedVehicle!.model : model;
 
-  const canSubmit =
-    Boolean(selectedSlot) &&
-    isValidYear(effectiveYear) &&
-    effectiveMake.trim().length > 1 &&
-    effectiveModel.trim().length > 1 &&
-    notes.trim().length > 3;
+  const gaps = bookingGaps({
+    year: effectiveYear,
+    make: effectiveMake,
+    model: effectiveModel,
+    notes,
+    hasSlot: Boolean(selectedSlot),
+  });
+  const canSubmit = gaps.length === 0;
 
   const applyVehicle = (vehicle: Vehicle | null) => {
     setSelectedVehicleId(vehicle?.id ?? null);
@@ -60,7 +63,9 @@ export default function BookScreen() {
   };
 
   const onBook = async () => {
+    setAttempted(true);
     if (!selectedSlot || !canSubmit) {
+      Alert.alert('A few details are missing', `Please add ${gaps.join(', ')}.`);
       return;
     }
     setSubmitting(true);
@@ -84,10 +89,20 @@ export default function BookScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Screen>
+    <Screen
+      footer={
+        <PrimaryButton
+          title={
+            selectedSlot
+              ? `Book ${formatDate(selectedSlot.date)} at ${formatTime(selectedSlot.start)}`
+              : 'Book appointment'
+          }
+          onPress={() => {
+            void onBook();
+          }}
+          loading={submitting}
+        />
+      }>
         <PageIntro
           eyebrow="Appointments"
           title="Book a time with Joe"
@@ -152,16 +167,16 @@ export default function BookScreen() {
                 label="Year"
                 value={year}
                 onChangeText={setYear}
-                keyboardType="number-pad"
-                placeholder="2016"
+                keyboardType="numeric"
+                placeholder="YYYY"
                 maxLength={4}
               />
-              <Field label="Make" value={make} onChangeText={setMake} placeholder="Ford" />
+              <Field label="Make" value={make} onChangeText={setMake} placeholder="e.g. Ford" />
               <Field
                 label="Model"
                 value={model}
                 onChangeText={setModel}
-                placeholder="F-150"
+                placeholder="e.g. F-150"
               />
             </View>
           ) : (
@@ -176,7 +191,7 @@ export default function BookScreen() {
           label="What is going on?"
           value={notes}
           onChangeText={setNotes}
-          placeholder="Example: grind when braking, or due for an inspection"
+          placeholder="Squeal, leak, inspection, or whatever you are noticing"
           multiline
         />
 
@@ -216,26 +231,10 @@ export default function BookScreen() {
           )}
         </Card>
 
-        {!canSubmit ? (
-          <Banner tone="warn">
-            Add the vehicle year, make, model, a short note, and a time before booking.
-          </Banner>
+        {attempted && gaps.length > 0 ? (
+          <Banner tone="warn">Still needed: {gaps.join(', ')}.</Banner>
         ) : null}
-
-        <PrimaryButton
-          title={
-            selectedSlot
-              ? `Book ${formatDate(selectedSlot.date)} at ${formatTime(selectedSlot.start)}`
-              : 'Book appointment'
-          }
-          onPress={() => {
-            void onBook();
-          }}
-          disabled={!canSubmit}
-          loading={submitting}
-        />
       </Screen>
-    </KeyboardAvoidingView>
   );
 }
 

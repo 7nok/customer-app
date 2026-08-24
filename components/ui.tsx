@@ -20,31 +20,30 @@ export function Screen({
   children,
   scroll = true,
   padded = true,
+  footer,
 }: {
   children: ReactNode;
   scroll?: boolean;
   padded?: boolean;
+  footer?: ReactNode;
 }) {
   const body = (
     <View style={[styles.screenInner, padded && styles.screenPad]}>{children}</View>
   );
 
-  if (!scroll) {
-    return (
-      <SafeAreaView style={styles.screen} edges={['left', 'right']}>
-        {body}
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.screen} edges={['left', 'right']}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}>
-        {body}
-      </ScrollView>
+      {scroll ? (
+        <ScrollView
+          contentContainerStyle={[styles.scrollContent, footer ? styles.scrollWithFooter : null]}
+          keyboardShouldPersistTaps="always"
+          showsVerticalScrollIndicator={false}>
+          {body}
+        </ScrollView>
+      ) : (
+        body
+      )}
+      {footer ? <View style={styles.footer}>{footer}</View> : null}
     </SafeAreaView>
   );
 }
@@ -99,17 +98,23 @@ export function PrimaryButton({
   disabled?: boolean;
   loading?: boolean;
 }) {
-  const isDisabled = disabled || loading;
+  const isBusy = Boolean(loading);
   return (
     <Pressable
-      onPress={onPress}
-      disabled={isDisabled}
+      accessibilityRole="button"
+      onPress={() => {
+        if (isBusy) {
+          return;
+        }
+        onPress();
+      }}
       style={({ pressed }) => [
         styles.primary,
-        isDisabled && styles.disabled,
-        pressed && !isDisabled && styles.pressed,
+        disabled && !isBusy && styles.primaryMuted,
+        isBusy && styles.disabled,
+        pressed && !isBusy && styles.pressed,
       ]}>
-      {loading ? (
+      {isBusy ? (
         <ActivityIndicator color={colors.navy} />
       ) : (
         <Text style={styles.primaryLabel}>{title}</Text>
@@ -153,6 +158,13 @@ export function Field({
         placeholderTextColor={colors.muted}
         style={[styles.input, inputProps.multiline && styles.multiline]}
         {...inputProps}
+        onChange={(event) => {
+          inputProps.onChange?.(event);
+          const next = event.nativeEvent.text;
+          if (typeof next === 'string') {
+            inputProps.onChangeText?.(next);
+          }
+        }}
       />
       {hint ? <Text style={styles.hint}>{hint}</Text> : null}
     </View>
@@ -271,7 +283,19 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 36,
+    paddingBottom: 48,
+  },
+  scrollWithFooter: {
+    paddingBottom: 24,
+  },
+  footer: {
+    backgroundColor: colors.bg,
+    borderTopColor: colors.line,
+    borderTopWidth: 1,
+    gap: spacing.sm,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
   },
   screenInner: {
     flexGrow: 1,
@@ -318,9 +342,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.amber,
     borderRadius: radius.sm,
+    cursor: 'pointer',
     minHeight: 52,
     justifyContent: 'center',
     paddingHorizontal: spacing.md,
+  },
+  primaryMuted: {
+    opacity: 0.78,
   },
   primaryLabel: {
     color: colors.navy,
@@ -333,6 +361,7 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: radius.sm,
     borderWidth: 1,
+    cursor: 'pointer',
     minHeight: 48,
     justifyContent: 'center',
     paddingHorizontal: spacing.md,
@@ -413,6 +442,9 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: 999,
     borderWidth: 1,
+    cursor: 'pointer',
+    minHeight: 40,
+    justifyContent: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
