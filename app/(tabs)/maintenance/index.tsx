@@ -5,9 +5,11 @@ import { Icon } from '@/components/icon';
 import { Banner, Card, PageIntro, Screen } from '@/components/ui';
 import { GUIDE_DISCLAIMER } from '@/constants/maintenance';
 import { colors, radius } from '@/constants/theme';
+import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export default function MaintenanceHomeScreen() {
   const router = useRouter();
+  const wide = useWideLayout(400);
 
   return (
     <Screen>
@@ -17,7 +19,7 @@ export default function MaintenanceHomeScreen() {
         body="Start with the kind of vehicle, then pick a system. Intervals are general — Joe still wants to look at the one in your driveway."
       />
 
-      <View style={styles.row}>
+      <View style={[styles.row, !wide && styles.rowStack]}>
         <Card
           style={styles.choice}
           onPress={() =>
@@ -52,9 +54,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
+  rowStack: {
+    flexDirection: 'column',
+  },
   choice: {
     flex: 1,
-    minHeight: 180,
+    minHeight: 148,
   },
   iconWrap: {
     alignItems: 'center',

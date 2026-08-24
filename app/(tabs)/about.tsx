@@ -111,16 +111,19 @@ const styles = StyleSheet.create({
   },
   hoursRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
   },
   hoursDay: {
     color: colors.text,
     fontWeight: '700',
+    minWidth: 88,
   },
   hoursTime: {
     color: colors.muted,
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     textAlign: 'right',
   },
 });

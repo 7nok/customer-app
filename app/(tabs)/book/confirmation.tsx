@@ -24,7 +24,7 @@ export default function BookingConfirmationScreen() {
   return (
     <Screen>
       <PageIntro
-        eyebrow="Confirmed on this phone"
+        eyebrow="Confirmed on this device"
         title="You’re on the calendar"
         body="Joe does not get a text or email from this first version. Bring the details with you, or show him this screen."
       />

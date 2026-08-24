@@ -85,7 +85,7 @@ export default function HomeScreen() {
           <Text style={styles.kicker}>Loyalty</Text>
           <Text style={styles.cardTitle}>Join the shop list</Text>
           <Text style={styles.muted}>
-            Leave your name, email, and vehicles on this phone so Joe has them handy.
+            Leave your name, email, and vehicles on this device so Joe has them handy.
           </Text>
         </Card>
       )}
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     color: colors.cream,
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: '800',
     letterSpacing: -0.6,
   },
@@ -163,10 +163,12 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     borderRadius: radius.md,
     borderWidth: 1,
-    gap: 6,
-    padding: spacing.md,
-    width: '48%',
+    flexBasis: '47%',
     flexGrow: 1,
+    gap: 6,
+    maxWidth: '100%',
+    minWidth: 140,
+    padding: spacing.md,
   },
   tileIcon: {
     alignItems: 'center',
@@ -204,8 +206,9 @@ const styles = StyleSheet.create({
   },
   hoursRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
   },
   hoursDay: {
     color: colors.text,

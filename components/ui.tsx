@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
 import { colors, radius, spacing } from '@/constants/theme';
+import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export function Screen({
   children,
@@ -57,10 +58,11 @@ export function PageIntro({
   title: string;
   body?: string;
 }) {
+  const wide = useWideLayout(400);
   return (
     <View style={styles.intro}>
       {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, !wide && styles.titleNarrow]}>{title}</Text>
       {body ? <Text style={styles.introBody}>{body}</Text> : null}
     </View>
   );
@@ -280,6 +282,8 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.bg,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   scrollContent: {
     flexGrow: 1,
@@ -321,6 +325,9 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     letterSpacing: -0.4,
+  },
+  titleNarrow: {
+    fontSize: 24,
   },
   introBody: {
     color: colors.muted,
@@ -413,7 +420,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: 12,
-    paddingVertical: 4,
+    minHeight: 44,
+    paddingVertical: 8,
   },
   rowIcon: {
     alignItems: 'center',
@@ -443,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     cursor: 'pointer',
-    minHeight: 40,
+    minHeight: 44,
     justifyContent: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
