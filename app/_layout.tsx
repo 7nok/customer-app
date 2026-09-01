@@ -7,6 +7,7 @@ import 'react-native-reanimated';
 
 import { AppStateProvider, useAppState } from '@/context/app-state';
 import { colors } from '@/constants/theme';
+import { useLockToVisualViewport } from '@/hooks/use-lock-to-visual-viewport';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -65,6 +66,8 @@ function RootNavigation() {
 }
 
 export default function RootLayout() {
+  useLockToVisualViewport();
+
   return (
     <ThemeProvider value={navigationTheme}>
       <AppStateProvider>
