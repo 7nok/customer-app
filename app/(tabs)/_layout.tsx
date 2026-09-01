@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 
+import { AppTabBar, TAB_BAR_CONTENT_HEIGHT } from '@/components/app-tab-bar';
 import { HapticTab } from '@/components/haptic-tab';
 import { Icon } from '@/components/icon';
 import { colors } from '@/constants/theme';
@@ -7,6 +8,7 @@ import { colors } from '@/constants/theme';
 export default function TabLayout() {
   return (
     <Tabs
+      tabBar={(props) => <AppTabBar {...props} />}
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
@@ -17,7 +19,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.navy,
           borderTopColor: colors.navyMid,
-          height: 58,
+          height: TAB_BAR_CONTENT_HEIGHT,
           paddingBottom: 6,
           paddingTop: 4,
         },
