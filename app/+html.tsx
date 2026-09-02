@@ -141,6 +141,9 @@ const responsiveCss = `
     background: #0B1622;
     padding-bottom: min(34px, env(safe-area-inset-bottom, 0px));
   }
+  #app-tab-bar [role="tablist"] {
+    overflow: visible !important;
+  }
   input, textarea, select, button {
     font-size: 16px;
   }

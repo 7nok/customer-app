@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/constants/theme';
 
 /** Icon + label row. Keep this compact — do not stretch to leftover viewport. */
-export const TAB_BAR_CONTENT_HEIGHT = 56;
+export const TAB_BAR_CONTENT_HEIGHT = 64;
 
 /**
  * Bottom tabs with intrinsic height. Safe-area padding is capped so a bogus
