@@ -35,30 +35,36 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 /**
- * First-paint shell: never 100vh. 100svh is the viewport with browser chrome
- * showing (the first-open state). JS then writes --app-height from
- * visualViewport / innerHeight so in-app webviews that overlay a toolbar still
- * fit without a scroll-jiggle.
+ * html/body fill the layout viewport (100%). #root is pinned to
+ * visualViewport.height + offsetTop. Never 100vh / 100svh on the shell — those
+ * units undersize this in-app webview without a matching offsetTop, which
+ * clips the hero and leaves a navy hole under the tab bar.
  *
  * Keep the script in sync with `hooks/use-lock-to-visual-viewport.ts`.
  */
 const visualViewportLockScript = `(function(){
   if (window.__lockAppToVisualViewport) return;
-  var HEIGHT_VAR = '--app-height';
-  var TOP_VAR = '--app-top';
   function measure() {
     var vv = window.visualViewport;
-    var heights = [];
     var scale = vv && vv.scale ? vv.scale : 1;
-    if (vv && vv.height && scale === 1) heights.push(vv.height);
-    if (window.innerHeight) heights.push(window.innerHeight);
-    var ch = document.documentElement && document.documentElement.clientHeight;
-    if (ch) heights.push(ch);
-    if (!heights.length) return;
-    var height = Math.min.apply(Math, heights);
-    var top = scale === 1 && vv && vv.offsetTop ? vv.offsetTop : 0;
-    document.documentElement.style.setProperty(HEIGHT_VAR, Math.round(height) + 'px');
-    document.documentElement.style.setProperty(TOP_VAR, Math.round(top) + 'px');
+    var top = 0;
+    var height = window.innerHeight || 0;
+    if (vv && scale === 1 && vv.height > 0) {
+      top = vv.offsetTop || 0;
+      height = vv.height;
+    }
+    if (height <= 0) return;
+    var h = Math.round(height) + 'px';
+    var t = Math.round(top) + 'px';
+    document.documentElement.style.setProperty('--app-height', h);
+    document.documentElement.style.setProperty('--app-top', t);
+    var root = document.getElementById('root');
+    if (root) {
+      root.style.position = 'fixed';
+      root.style.top = t;
+      root.style.height = h;
+      root.style.maxHeight = h;
+    }
   }
   window.__lockAppToVisualViewport = measure;
   measure();
@@ -85,12 +91,8 @@ const responsiveCss = `
     --app-height: 100%;
     --app-top: 0px;
   }
-  @supports (height: 100svh) {
-    :root { --app-height: 100svh; }
-  }
   html, body {
-    height: var(--app-height, 100%);
-    max-height: var(--app-height, 100%);
+    height: 100%;
     margin: 0;
     max-width: 100%;
     overflow: hidden;
@@ -112,16 +114,14 @@ const responsiveCss = `
     width: 100%;
     max-width: 100%;
     height: var(--app-height, 100%);
-    max-height: var(--app-height, 100%);
     min-height: 0;
     margin: 0 auto;
     overflow: hidden;
     background: #F3EFE6;
   }
   #root > * {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
-    max-height: 100%;
   }
   @media (min-width: 600px) {
     #root {
@@ -129,16 +129,20 @@ const responsiveCss = `
       box-shadow: 0 0 0 1px #142433, 0 18px 48px rgba(0, 0, 0, 0.28);
     }
   }
-  /* Tab bar: home indicator + in-app browser toolbars that ignore safe-area. */
+  /* Compact tab bar: intrinsic height only. Cap safe-area so a broken
+     env(safe-area-inset-bottom) cannot stretch a navy slab. */
   #app-tab-bar {
-    flex: 0 0 auto;
+    flex: 0 0 auto !important;
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
     background: #0B1622;
-    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    padding-bottom: min(34px, env(safe-area-inset-bottom, 0px));
   }
-  @media (max-width: 480px) {
-    #app-tab-bar {
-      padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
-    }
+  #app-tab-bar [role="tablist"] {
+    overflow: visible !important;
   }
   input, textarea, select, button {
     font-size: 16px;

@@ -20,11 +20,12 @@ export default function TabLayout() {
           backgroundColor: colors.navy,
           borderTopColor: colors.navyMid,
           height: TAB_BAR_CONTENT_HEIGHT,
-          paddingBottom: 6,
-          paddingTop: 4,
+          paddingBottom: 8,
+          paddingTop: 6,
+          overflow: 'visible',
         },
-        tabBarItemStyle: { paddingHorizontal: 0 },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '700' },
+        tabBarItemStyle: { paddingHorizontal: 0, overflow: 'visible' },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '700', lineHeight: 12 },
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
