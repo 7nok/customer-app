@@ -11,10 +11,11 @@ const HEIGHT_VAR = '--app-height';
 const TOP_VAR = '--app-top';
 
 /**
- * Size the web app shell to the *visible* viewport, not 100vh / the layout
- * viewport. In-app browsers (and iOS Safari) overlay chrome on top of the
- * layout viewport; locking to visualViewport (and innerHeight as a floor)
- * keeps the hero and tab bar on-screen on first paint and when chrome moves.
+ * Pin the web shell to the visual viewport box (height + offsetTop).
+ *
+ * Do not mix in `documentElement.clientHeight` or 100svh: those follow our own
+ * CSS and shrink the shell without moving it down, which leaves a navy gap
+ * below the tab bar while the in-app URL bar still covers the hero.
  *
  * Keep this in sync with the blocking script in `app/+html.tsx`.
  */
@@ -24,25 +25,30 @@ export function measureVisibleViewport(): void {
   }
 
   const vv = window.visualViewport;
-  const heights: number[] = [];
   const scale = vv?.scale ?? 1;
-  if (vv && vv.height && scale === 1) {
-    heights.push(vv.height);
-  }
-  if (window.innerHeight) {
-    heights.push(window.innerHeight);
-  }
-  const clientHeight = document.documentElement?.clientHeight;
-  if (clientHeight) {
-    heights.push(clientHeight);
+  let top = 0;
+  let height = window.innerHeight || 0;
+
+  if (vv && scale === 1 && vv.height > 0) {
+    top = vv.offsetTop || 0;
+    height = vv.height;
   }
 
-  const height = heights.length ? Math.min(...heights) : 0;
-  const top = scale === 1 ? (vv?.offsetTop ?? 0) : 0;
-  const root = document.documentElement;
-  if (height > 0) {
-    root.style.setProperty(HEIGHT_VAR, `${Math.round(height)}px`);
-    root.style.setProperty(TOP_VAR, `${Math.round(top)}px`);
+  if (height <= 0) {
+    return;
+  }
+
+  const heightPx = `${Math.round(height)}px`;
+  const topPx = `${Math.round(top)}px`;
+  document.documentElement.style.setProperty(HEIGHT_VAR, heightPx);
+  document.documentElement.style.setProperty(TOP_VAR, topPx);
+
+  const root = document.getElementById('root');
+  if (root) {
+    root.style.position = 'fixed';
+    root.style.top = topPx;
+    root.style.height = heightPx;
+    root.style.maxHeight = heightPx;
   }
 }
 
