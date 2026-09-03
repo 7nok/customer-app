@@ -26,7 +26,7 @@ export default function MaintenanceHomeScreen() {
             router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'car' } })
           }>
           <View style={styles.iconWrap}>
-            <Icon name="car-sport" color={colors.amber} size={28} />
+            <Icon name="car-sport-outline" color={colors.cream} size={28} />
           </View>
           <Text style={styles.choiceTitle}>Car</Text>
           <Text style={styles.choiceBody}>Sedans, coupes, crossovers, and family vehicles.</Text>
@@ -37,7 +37,7 @@ export default function MaintenanceHomeScreen() {
             router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'truck' } })
           }>
           <View style={styles.iconWrap}>
-            <Icon name="bus" color={colors.amber} size={28} />
+            <Icon name="bus-outline" color={colors.cream} size={28} />
           </View>
           <Text style={styles.choiceTitle}>Truck</Text>
           <Text style={styles.choiceBody}>Pickups, 4x4s, and light-duty work trucks.</Text>
@@ -63,8 +63,10 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     alignItems: 'center',
-    backgroundColor: colors.navy,
+    backgroundColor: colors.charcoal,
+    borderColor: colors.line,
     borderRadius: radius.sm,
+    borderWidth: 1,
     height: 48,
     justifyContent: 'center',
     width: 48,
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
   choiceTitle: {
     color: colors.text,
     fontSize: 22,
-    fontWeight: '800',
+    fontWeight: '500',
   },
   choiceBody: {
     color: colors.muted,

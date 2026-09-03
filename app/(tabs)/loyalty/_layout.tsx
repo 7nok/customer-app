@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 
 export default function LoyaltyLayout() {
   return (
@@ -8,7 +8,7 @@ export default function LoyaltyLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: type.header,
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.bg },
       }}>

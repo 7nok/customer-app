@@ -120,7 +120,7 @@ function HomeTile({
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.tile, pressed && { opacity: 0.85 }]}>
       <View style={styles.tileIcon}>
-        <Icon name={icon} color={colors.amber} size={22} />
+        <Icon name={icon} color={colors.cream} size={22} />
       </View>
       <Text style={styles.tileTitle}>{title}</Text>
       <Text style={styles.tileBody}>{body}</Text>
@@ -130,28 +130,30 @@ function HomeTile({
 
 const styles = StyleSheet.create({
   hero: {
-    backgroundColor: colors.navy,
+    backgroundColor: colors.charcoal,
+    borderColor: colors.line,
     borderRadius: radius.lg,
-    gap: 8,
-    padding: spacing.lg,
+    borderWidth: 1,
+    gap: 10,
+    padding: spacing.xl,
   },
   heroEyebrow: {
-    color: colors.amber,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    color: colors.muted,
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 2.2,
     textTransform: 'uppercase',
   },
   heroTitle: {
     color: colors.cream,
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -0.6,
+    fontSize: 36,
+    fontWeight: '500',
+    letterSpacing: -1,
   },
   heroBody: {
-    color: '#C9D0D6',
+    color: colors.muted,
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   grid: {
     flexDirection: 'row',
@@ -172,8 +174,10 @@ const styles = StyleSheet.create({
   },
   tileIcon: {
     alignItems: 'center',
-    backgroundColor: colors.navy,
-    borderRadius: 10,
+    backgroundColor: colors.charcoal,
+    borderColor: colors.line,
+    borderRadius: radius.sm,
+    borderWidth: 1,
     height: 36,
     justifyContent: 'center',
     width: 36,
@@ -181,23 +185,23 @@ const styles = StyleSheet.create({
   tileTitle: {
     color: colors.text,
     fontSize: 17,
-    fontWeight: '800',
+    fontWeight: '500',
   },
   tileBody: {
     color: colors.muted,
     fontSize: 13,
   },
   kicker: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
+    color: colors.muted,
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 2,
     textTransform: 'uppercase',
   },
   cardTitle: {
     color: colors.text,
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '500',
   },
   muted: {
     color: colors.muted,

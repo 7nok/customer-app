@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { AppStateProvider, useAppState } from '@/context/app-state';
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 import { useLockToVisualViewport } from '@/hooks/use-lock-to-visual-viewport';
 
 export const unstable_settings = {
@@ -50,7 +50,7 @@ function RootNavigation() {
         screenOptions={{
           headerStyle: { backgroundColor: colors.navy },
           headerTintColor: colors.cream,
-          headerTitleStyle: { fontWeight: '700' },
+          headerTitleStyle: type.header,
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.bg },
         }}>
