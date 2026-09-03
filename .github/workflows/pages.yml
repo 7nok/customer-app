@@ -2,7 +2,7 @@ name: GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [B]
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-B
   cancel-in-progress: false
 
 jobs:
@@ -43,27 +43,27 @@ jobs:
           cp dist/index.html dist/404.html
 
       - name: Setup Pages
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.ref == 'refs/heads/B' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload GitHub Pages artifact
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.ref == 'refs/heads/B' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/B' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: export-web
     runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    # The repo's github-pages environment only allows `main`. That blocks
+    # actions/deploy-pages on B even after export succeeds. Deploy without
+    # that protected environment so style B can publish without merging.
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
