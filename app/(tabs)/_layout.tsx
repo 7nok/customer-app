@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { AppTabBar, TAB_BAR_CONTENT_HEIGHT } from '@/components/app-tab-bar';
 import { HapticTab } from '@/components/haptic-tab';
 import { Icon } from '@/components/icon';
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
@@ -12,7 +12,7 @@ export default function TabLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: type.header,
         headerShadowVisible: false,
         tabBarActiveTintColor: colors.amber,
         tabBarInactiveTintColor: colors.tabInactive,
@@ -25,14 +25,14 @@ export default function TabLayout() {
           overflow: 'visible',
         },
         tabBarItemStyle: { paddingHorizontal: 0, overflow: 'visible' },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '700', lineHeight: 12 },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '500', lineHeight: 12 },
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Icon name="home" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="home-outline" color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -40,7 +40,7 @@ export default function TabLayout() {
         options={{
           title: 'Book',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Icon name="calendar" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="calendar-outline" color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -48,7 +48,7 @@ export default function TabLayout() {
         options={{
           title: 'Guide',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Icon name="construct" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="book-outline" color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -56,14 +56,14 @@ export default function TabLayout() {
         options={{
           title: 'Loyalty',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Icon name="ribbon" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="heart-outline" color={color} size={22} />,
         }}
       />
       <Tabs.Screen
         name="about"
         options={{
           title: 'About',
-          tabBarIcon: ({ color }) => <Icon name="person" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="person-outline" color={color} size={22} />,
         }}
       />
     </Tabs>
