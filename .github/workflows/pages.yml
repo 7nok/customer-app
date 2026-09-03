@@ -61,9 +61,9 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    # The repo's github-pages environment only allows `main`. That blocks
+    # actions/deploy-pages on A even after export succeeds. Deploy without
+    # that protected environment so style A can publish without merging.
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
