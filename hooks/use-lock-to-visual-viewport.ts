@@ -36,24 +36,34 @@ export function measureVisibleViewport(): void {
   if (root) {
     root.style.position = 'fixed';
     root.style.top = topPx;
-    root.style.bottom = '0px';
-    root.style.height = 'auto';
-    root.style.maxHeight = 'none';
+    if (box.pinToBottom) {
+      root.style.bottom = '0px';
+      root.style.height = 'auto';
+      root.style.maxHeight = 'none';
+    } else {
+      root.style.bottom = 'auto';
+      root.style.height = heightPx;
+      root.style.maxHeight = heightPx;
+    }
   }
 }
 
-export function visibleShellBox(): { top: number; height: number } {
+export function visibleShellBox(): { top: number; height: number; pinToBottom: boolean } {
   const inner = window.innerHeight || 0;
   const vv = window.visualViewport;
   const scale = vv?.scale ?? 1;
   let top = 0;
   let height = inner;
+  let pinToBottom = true;
 
   if (vv && scale === 1 && vv.height > 0) {
     top = vv.offsetTop || 0;
     height = vv.height;
     if (top === 0 && inner > height + 1) {
       top = inner - height;
+      pinToBottom = true;
+    } else if (top > 0) {
+      pinToBottom = false;
     }
   }
 
@@ -67,7 +77,7 @@ export function visibleShellBox(): { top: number; height: number } {
     height = inner - top;
   }
 
-  return { top, height };
+  return { top, height, pinToBottom };
 }
 
 export function useLockToVisualViewport(): void {

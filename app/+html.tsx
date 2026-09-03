@@ -63,15 +63,22 @@ const visualViewportLockScript = `(function(){
     if (inner > 0 && top + height > inner) height = Math.max(0, inner - top);
     var t = Math.round(top) + 'px';
     var h = Math.round(height > 0 ? height : inner) + 'px';
+    var pinToBottom = !(vv && (vv.offsetTop || 0) > 0);
     document.documentElement.style.setProperty('--app-top', t);
     document.documentElement.style.setProperty('--app-height', h);
     var root = document.getElementById('root');
     if (root) {
       root.style.position = 'fixed';
       root.style.top = t;
-      root.style.bottom = '0px';
-      root.style.height = 'auto';
-      root.style.maxHeight = 'none';
+      if (pinToBottom) {
+        root.style.bottom = '0px';
+        root.style.height = 'auto';
+        root.style.maxHeight = 'none';
+      } else {
+        root.style.bottom = 'auto';
+        root.style.height = h;
+        root.style.maxHeight = h;
+      }
     }
   }
   window.__lockAppToVisualViewport = measure;
