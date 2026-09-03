@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from '@/components/icon';
 import { Banner, Card, Screen } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, fonts, radius, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { formatDate, formatTime, summarizeHours, vehicleLabel } from '@/lib/format';
 
@@ -131,27 +131,30 @@ function HomeTile({
 const styles = StyleSheet.create({
   hero: {
     backgroundColor: colors.navy,
+    borderBottomColor: colors.amber,
+    borderBottomWidth: 2,
     borderRadius: radius.lg,
-    gap: 8,
-    padding: spacing.lg,
+    gap: 10,
+    padding: spacing.xl,
   },
   heroEyebrow: {
     color: colors.amber,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.8,
     textTransform: 'uppercase',
   },
   heroTitle: {
     color: colors.cream,
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -0.6,
+    fontFamily: fonts.display,
+    fontSize: 34,
+    fontWeight: '600',
+    letterSpacing: -0.3,
   },
   heroBody: {
-    color: '#C9D0D6',
+    color: '#D8CDB8',
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   grid: {
     flexDirection: 'row',
@@ -173,15 +176,16 @@ const styles = StyleSheet.create({
   tileIcon: {
     alignItems: 'center',
     backgroundColor: colors.navy,
-    borderRadius: 10,
+    borderRadius: radius.sm,
     height: 36,
     justifyContent: 'center',
     width: 36,
   },
   tileTitle: {
     color: colors.text,
+    fontFamily: fonts.display,
     fontSize: 17,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   tileBody: {
     color: colors.muted,
@@ -189,15 +193,16 @@ const styles = StyleSheet.create({
   },
   kicker: {
     color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
   },
   cardTitle: {
     color: colors.text,
+    fontFamily: fonts.display,
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   muted: {
     color: colors.muted,

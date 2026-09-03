@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { AppTabBar, TAB_BAR_CONTENT_HEIGHT } from '@/components/app-tab-bar';
 import { HapticTab } from '@/components/haptic-tab';
 import { Icon } from '@/components/icon';
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
@@ -12,7 +12,7 @@ export default function TabLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: type.header,
         headerShadowVisible: false,
         tabBarActiveTintColor: colors.amber,
         tabBarInactiveTintColor: colors.tabInactive,
@@ -48,7 +48,7 @@ export default function TabLayout() {
         options={{
           title: 'Guide',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Icon name="construct" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="hammer" color={color} size={22} />,
         }}
       />
       <Tabs.Screen
@@ -63,7 +63,7 @@ export default function TabLayout() {
         name="about"
         options={{
           title: 'About',
-          tabBarIcon: ({ color }) => <Icon name="person" color={color} size={22} />,
+          tabBarIcon: ({ color }) => <Icon name="person-circle" color={color} size={22} />,
         }}
       />
     </Tabs>

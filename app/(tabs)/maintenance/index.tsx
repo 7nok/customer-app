@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Icon } from '@/components/icon';
 import { Banner, Card, PageIntro, Screen } from '@/components/ui';
 import { GUIDE_DISCLAIMER } from '@/constants/maintenance';
-import { colors, radius } from '@/constants/theme';
+import { colors, fonts, radius } from '@/constants/theme';
 import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export default function MaintenanceHomeScreen() {
@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
   choiceTitle: {
     color: colors.text,
     fontSize: 22,
-    fontWeight: '800',
+    fontFamily: fonts.display,
+    fontWeight: '600',
   },
   choiceBody: {
     color: colors.muted,

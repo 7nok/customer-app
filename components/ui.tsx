@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, fonts, radius, spacing } from '@/constants/theme';
 import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export function Screen({
@@ -315,24 +315,25 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     color: colors.amberDeep,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.6,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.8,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -0.4,
+    fontFamily: fonts.display,
+    fontSize: 30,
+    fontWeight: '600',
+    letterSpacing: -0.3,
   },
   titleNarrow: {
-    fontSize: 24,
+    fontSize: 26,
   },
   introBody: {
     color: colors.muted,
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   card: {
     backgroundColor: colors.card,
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     padding: spacing.md,
-    gap: 8,
+    gap: 10,
   },
   pressed: {
     opacity: 0.82,
@@ -358,9 +359,10 @@ const styles = StyleSheet.create({
     opacity: 0.78,
   },
   primaryLabel: {
-    color: colors.navy,
+    color: colors.cream,
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
   secondary: {
     alignItems: 'center',
@@ -376,7 +378,7 @@ const styles = StyleSheet.create({
   secondaryLabel: {
     color: colors.navy,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   disabled: {
     opacity: 0.45,
@@ -385,9 +387,11 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   fieldLabel: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '700',
+    color: colors.amberDeep,
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   input: {
     backgroundColor: colors.white,
@@ -437,8 +441,9 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     color: colors.text,
+    fontFamily: fonts.display,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   rowSubtitle: {
     color: colors.muted,
@@ -466,7 +471,7 @@ const styles = StyleSheet.create({
   chipLabel: {
     color: colors.text,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   chipLabelSelected: {
     color: colors.cream,
