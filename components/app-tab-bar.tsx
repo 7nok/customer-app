@@ -8,8 +8,8 @@ import { colors } from '@/constants/theme';
 export const TAB_BAR_CONTENT_HEIGHT = 64;
 
 /**
- * Bottom tabs with intrinsic height. Safe-area padding is capped so a bogus
- * web inset cannot turn the bar into a tall navy block.
+ * Compact bottom tabs. Web padding is 0 — the shell is already pinned to the
+ * visible viewport; extra safe-area padding was painting a navy slab.
  */
 export function AppTabBar(props: BottomTabBarProps) {
   const insets = useSafeAreaInsets();

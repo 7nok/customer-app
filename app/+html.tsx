@@ -35,35 +35,50 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 /**
- * html/body fill the layout viewport (100%). #root is pinned to
- * visualViewport.height + offsetTop. Never 100vh / 100svh on the shell — those
- * units undersize this in-app webview without a matching offsetTop, which
- * clips the hero and leaves a navy hole under the tab bar.
+ * First paint: #root stretches from the top safe area to the layout bottom
+ * (no 100vh / 100svh). JS then pins the visible box.
  *
- * Keep the script in sync with `hooks/use-lock-to-visual-viewport.ts`.
+ * If visualViewport is shorter than innerHeight and offsetTop is 0 (common in
+ * in-app WKWebViews), leftover space is applied as a *top* inset and #root
+ * stretches to bottom:0 so body navy cannot form a slab under the tabs.
+ *
+ * Keep in sync with `hooks/use-lock-to-visual-viewport.ts`.
  */
 const visualViewportLockScript = `(function(){
   if (window.__lockAppToVisualViewport) return;
   function measure() {
+    var inner = window.innerHeight || 0;
     var vv = window.visualViewport;
     var scale = vv && vv.scale ? vv.scale : 1;
     var top = 0;
-    var height = window.innerHeight || 0;
+    var height = inner;
     if (vv && scale === 1 && vv.height > 0) {
       top = vv.offsetTop || 0;
       height = vv.height;
+      if (top === 0 && inner > height + 1) {
+        top = inner - height;
+      }
     }
-    if (height <= 0) return;
-    var h = Math.round(height) + 'px';
+    if (top < 0) top = 0;
+    if (inner > 0 && top + height > inner) height = Math.max(0, inner - top);
     var t = Math.round(top) + 'px';
-    document.documentElement.style.setProperty('--app-height', h);
+    var h = Math.round(height > 0 ? height : inner) + 'px';
+    var pinToBottom = !(vv && (vv.offsetTop || 0) > 0);
     document.documentElement.style.setProperty('--app-top', t);
+    document.documentElement.style.setProperty('--app-height', h);
     var root = document.getElementById('root');
     if (root) {
       root.style.position = 'fixed';
       root.style.top = t;
-      root.style.height = h;
-      root.style.maxHeight = h;
+      if (pinToBottom) {
+        root.style.bottom = '0px';
+        root.style.height = 'auto';
+        root.style.maxHeight = 'none';
+      } else {
+        root.style.bottom = 'auto';
+        root.style.height = h;
+        root.style.maxHeight = h;
+      }
     }
   }
   window.__lockAppToVisualViewport = measure;
@@ -88,8 +103,8 @@ const visualViewportLockScript = `(function(){
 const responsiveCss = `
   *, *::before, *::after { box-sizing: border-box; }
   :root {
+    --app-top: env(safe-area-inset-top, 0px);
     --app-height: 100%;
-    --app-top: 0px;
   }
   html, body {
     height: 100%;
@@ -97,7 +112,7 @@ const responsiveCss = `
     max-width: 100%;
     overflow: hidden;
     overscroll-behavior: none;
-    background: #0B1622;
+    background: #F3EFE6;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -107,13 +122,14 @@ const responsiveCss = `
   #root {
     position: fixed;
     top: var(--app-top, 0px);
+    bottom: 0;
     left: 0;
     right: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 100%;
-    height: var(--app-height, 100%);
+    height: auto;
     min-height: 0;
     margin: 0 auto;
     overflow: hidden;
@@ -129,8 +145,7 @@ const responsiveCss = `
       box-shadow: 0 0 0 1px #142433, 0 18px 48px rgba(0, 0, 0, 0.28);
     }
   }
-  /* Compact tab bar: intrinsic height only. Cap safe-area so a broken
-     env(safe-area-inset-bottom) cannot stretch a navy slab. */
+  /* Compact tab bar — no extra bottom padding on web. */
   #app-tab-bar {
     flex: 0 0 auto !important;
     flex-grow: 0 !important;
@@ -139,7 +154,7 @@ const responsiveCss = `
     max-height: none !important;
     overflow: visible !important;
     background: #0B1622;
-    padding-bottom: min(34px, env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0 !important;
   }
   #app-tab-bar [role="tablist"] {
     overflow: visible !important;

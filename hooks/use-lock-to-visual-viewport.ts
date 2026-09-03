@@ -7,49 +7,77 @@ declare global {
   }
 }
 
-const HEIGHT_VAR = '--app-height';
-const TOP_VAR = '--app-top';
-
 /**
- * Pin the web shell to the visual viewport box (height + offsetTop).
+ * Pin `#root` to the visible box.
  *
- * Do not mix in `documentElement.clientHeight` or 100svh: those follow our own
- * CSS and shrink the shell without moving it down, which leaves a navy gap
- * below the tab bar while the in-app URL bar still covers the hero.
+ * Grok's in-app browser reports visualViewport.height shorter than innerHeight
+ * but offsetTop === 0. Using that height at top:0 leaves a navy hole under the
+ * tabs (body shows through) while the URL bar still covers the hero.
  *
- * Keep this in sync with the blocking script in `app/+html.tsx`.
+ * When offsetTop is 0 and the visual viewport is shorter, treat the leftover
+ * as a *top* inset and stretch `#root` to the layout bottom so the tab bar
+ * sits flush above the in-app toolbar.
+ *
+ * Keep in sync with the blocking script in `app/+html.tsx`.
  */
 export function measureVisibleViewport(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return;
   }
 
-  const vv = window.visualViewport;
-  const scale = vv?.scale ?? 1;
-  let top = 0;
-  let height = window.innerHeight || 0;
+  const box = visibleShellBox();
+  const topPx = `${Math.round(box.top)}px`;
+  const heightPx = `${Math.round(box.height)}px`;
 
-  if (vv && scale === 1 && vv.height > 0) {
-    top = vv.offsetTop || 0;
-    height = vv.height;
-  }
-
-  if (height <= 0) {
-    return;
-  }
-
-  const heightPx = `${Math.round(height)}px`;
-  const topPx = `${Math.round(top)}px`;
-  document.documentElement.style.setProperty(HEIGHT_VAR, heightPx);
-  document.documentElement.style.setProperty(TOP_VAR, topPx);
+  document.documentElement.style.setProperty('--app-top', topPx);
+  document.documentElement.style.setProperty('--app-height', heightPx);
 
   const root = document.getElementById('root');
   if (root) {
     root.style.position = 'fixed';
     root.style.top = topPx;
-    root.style.height = heightPx;
-    root.style.maxHeight = heightPx;
+    if (box.pinToBottom) {
+      root.style.bottom = '0px';
+      root.style.height = 'auto';
+      root.style.maxHeight = 'none';
+    } else {
+      root.style.bottom = 'auto';
+      root.style.height = heightPx;
+      root.style.maxHeight = heightPx;
+    }
   }
+}
+
+export function visibleShellBox(): { top: number; height: number; pinToBottom: boolean } {
+  const inner = window.innerHeight || 0;
+  const vv = window.visualViewport;
+  const scale = vv?.scale ?? 1;
+  let top = 0;
+  let height = inner;
+  let pinToBottom = true;
+
+  if (vv && scale === 1 && vv.height > 0) {
+    top = vv.offsetTop || 0;
+    height = vv.height;
+    if (top === 0 && inner > height + 1) {
+      top = inner - height;
+      pinToBottom = true;
+    } else if (top > 0) {
+      pinToBottom = false;
+    }
+  }
+
+  if (top < 0) {
+    top = 0;
+  }
+  if (inner > 0 && top + height > inner) {
+    height = Math.max(0, inner - top);
+  }
+  if (height <= 0 && inner > 0) {
+    height = inner - top;
+  }
+
+  return { top, height, pinToBottom };
 }
 
 export function useLockToVisualViewport(): void {
