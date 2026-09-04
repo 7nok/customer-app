@@ -12,7 +12,7 @@ export default function LoyaltyLayout() {
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.bg },
       }}>
-      <Stack.Screen name="index" options={{ title: 'Loyalty' }} />
+      <Stack.Screen name="index" options={{ title: 'Loyalty', headerShown: false }} />
       <Stack.Screen name="signup" options={{ title: 'Join' }} />
       <Stack.Screen name="confirmation" options={{ title: 'You’re in' }} />
     </Stack>

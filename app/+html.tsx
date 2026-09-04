@@ -141,7 +141,7 @@ const responsiveCss = `
   }
   @media (min-width: 600px) {
     #root {
-      max-width: 560px;
+      max-width: 640px;
       box-shadow: 0 0 0 1px #D4C8B4, 0 18px 48px rgba(42, 34, 24, 0.18);
     }
   }

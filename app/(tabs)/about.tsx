@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
-import { Banner, Card, PageIntro, PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
+import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors } from '@/constants/theme';
+import { colors, fonts, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { summarizeHours } from '@/lib/format';
 
@@ -14,116 +14,143 @@ export default function AboutScreen() {
 
   return (
     <Screen>
-      <PageIntro eyebrow="About Me" title={`${shop.name} · ${shop.locationLabel}`} body={shop.tagline} />
+      <Text style={styles.folio}>The shop</Text>
+      <Text style={styles.title}>{shop.name}</Text>
+      <Text style={styles.deck}>{shop.tagline}</Text>
 
-      <Card>
-        {shop.placeholderBio.map((paragraph) => (
-          <Text
-            key={paragraph}
-            style={[styles.bio, paragraph.startsWith('[PLACEHOLDER') && styles.placeholder]}>
-            {paragraph}
-          </Text>
-        ))}
-      </Card>
+      {shop.placeholderBio.map((paragraph) => (
+        <Text
+          key={paragraph}
+          style={[styles.story, paragraph.startsWith('[PLACEHOLDER') && styles.placeholder]}>
+          {paragraph}
+        </Text>
+      ))}
 
-      <Card>
-        <Text style={styles.label}>What we work on</Text>
-        {shop.workList.map((item) => (
-          <Text key={item} style={styles.body}>
-            • {item}
-          </Text>
-        ))}
-      </Card>
+      <Text style={styles.chapter}>What we take on</Text>
+      {shop.workList.map((item, index) => (
+        <Text key={item} style={styles.catalog}>
+          {String(index + 1).padStart(2, '0')}  {item}
+        </Text>
+      ))}
 
-      <Card>
-        <Text style={styles.label}>Find us</Text>
-        <Text style={styles.value}>{shop.locationLabel}</Text>
-        <Text style={styles.muted}>Street address can be added when Joe has a shop line on the books.</Text>
-        <Text style={styles.label}>Phone</Text>
-        <Text style={styles.value}>{shop.phone}</Text>
-        <Text style={styles.muted}>{shop.phoneNote}</Text>
-      </Card>
-
-      <Card>
-        <Text style={styles.label}>Weekly hours</Text>
+      <View style={styles.plaque}>
+        <Text style={styles.plaqueKicker}>Find us</Text>
+        <Text style={styles.plaqueValue}>{shop.locationLabel}</Text>
+        <Text style={styles.plaqueMuted}>Street address can be added when a shop line is on the books.</Text>
+        <Text style={styles.plaqueKicker}>Telephone</Text>
+        <Text style={styles.plaqueValue}>{shop.phone}</Text>
+        <Text style={styles.plaqueMuted}>{shop.phoneNote}</Text>
+        <Text style={styles.plaqueKicker}>Weekly hours</Text>
         {hours.map((row) => (
           <View key={row.day} style={styles.hoursRow}>
             <Text style={styles.hoursDay}>{row.day}</Text>
             <Text style={styles.hoursTime}>{row.hours}</Text>
           </View>
         ))}
-      </Card>
+      </View>
 
-      <Banner>
-        Hours and open appointment slots are the same weekly schedule Joe can edit in Shop hours.
-      </Banner>
-
-      <PrimaryButton
-        title="Call the placeholder line"
-        onPress={() => {
-          void Linking.openURL(`tel:${shop.phoneTel}`);
-        }}
-      />
-      <SecondaryButton
-        title="Open Hillsboro, TX in maps"
-        onPress={() => {
-          void Linking.openURL(
-            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery)}`,
-          );
-        }}
-      />
-      <SecondaryButton title="Joe: set available times" onPress={() => router.push('/availability')} />
+      <View style={{ gap: spacing.sm, marginTop: spacing.lg }}>
+        <PrimaryButton
+          title="Call the placeholder line"
+          onPress={() => {
+            void Linking.openURL(`tel:${shop.phoneTel}`);
+          }}
+        />
+        <SecondaryButton
+          title="Open Hillsboro, TX in maps"
+          onPress={() => {
+            void Linking.openURL(
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery)}`,
+            );
+          }}
+        />
+        <SecondaryButton title="Joe: set available times" onPress={() => router.push('/availability')} />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  bio: {
+  folio: {
+    color: colors.amberDeep,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  title: {
     color: colors.text,
-    fontSize: 16,
-    lineHeight: 24,
+    fontFamily: fonts.display,
+    fontSize: 40,
+    fontWeight: '600',
+    marginTop: 6,
+  },
+  deck: {
+    color: colors.muted,
+    fontFamily: fonts.display,
+    fontSize: 20,
+    lineHeight: 28,
+    marginTop: 8,
+    marginBottom: spacing.md,
+  },
+  story: {
+    color: colors.text,
+    fontSize: 17,
+    lineHeight: 28,
+    marginBottom: spacing.md,
   },
   placeholder: {
     color: colors.warn,
     fontWeight: '700',
   },
-  label: {
+  chapter: {
     color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.8,
+    marginBottom: 8,
+    marginTop: spacing.sm,
     textTransform: 'uppercase',
   },
-  value: {
-    color: colors.text,
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  body: {
+  catalog: {
     color: colors.text,
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 28,
   },
-  muted: {
-    color: colors.muted,
-    fontSize: 14,
+  plaque: {
+    backgroundColor: colors.navy,
+    gap: 6,
+    marginTop: spacing.xl,
+    padding: spacing.md,
+  },
+  plaqueKicker: {
+    color: colors.amber,
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.4,
+    marginTop: 8,
+    textTransform: 'uppercase',
+  },
+  plaqueValue: {
+    color: colors.cream,
+    fontFamily: fonts.display,
+    fontSize: 20,
+  },
+  plaqueMuted: {
+    color: colors.tabInactive,
+    fontSize: 13,
     lineHeight: 20,
   },
   hoursRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 8,
   },
   hoursDay: {
-    color: colors.text,
-    fontWeight: '700',
-    minWidth: 88,
+    color: colors.cream,
+    fontSize: 13,
   },
   hoursTime: {
-    color: colors.muted,
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlign: 'right',
+    color: colors.tabInactive,
+    fontSize: 13,
   },
 });

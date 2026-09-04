@@ -12,7 +12,7 @@ export default function BookLayout() {
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.bg },
       }}>
-      <Stack.Screen name="index" options={{ title: 'Book' }} />
+      <Stack.Screen name="index" options={{ title: 'Book', headerShown: false }} />
       <Stack.Screen name="confirmation" options={{ title: 'You’re booked' }} />
     </Stack>
   );
