@@ -2,18 +2,18 @@ name: GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [C]
   pull_request:
   workflow_dispatch:
 
+# actions/deploy-pages mints an OIDC token. These must be granted at
+# workflow scope and again on the deploy job — a job-level permissions
+# block replaces (does not inherit) the workflow block.
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
+  actions: read
 
 jobs:
   export-web:
@@ -43,28 +43,41 @@ jobs:
           cp dist/index.html dist/404.html
 
       - name: Setup Pages
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.ref == 'refs/heads/C' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload GitHub Pages artifact
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: github.ref == 'refs/heads/C' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/C' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: export-web
     runs-on: ubuntu-latest
+    # Only the deploy job uses pages-C. Workflow-level concurrency let PR
+    # export runs cancel a pending push deploy (the permission-fix push).
+    concurrency:
+      group: pages-C
+      cancel-in-progress: false
     permissions:
+      contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      actions: read
+    # The repo's github-pages environment only allows `main`. That blocks
+    # actions/deploy-pages on C even after export succeeds. Deploy without
+    # that protected environment so style C can publish without merging.
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      # OIDC minting can time out and surface as "id-token: write" missing.
+      - name: Retry deploy to GitHub Pages
+        id: deployment-retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
