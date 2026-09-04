@@ -6,10 +6,14 @@ on:
   pull_request:
   workflow_dispatch:
 
+# actions/deploy-pages mints an OIDC token. These must be granted at
+# workflow scope and again on the deploy job — a job-level permissions
+# block replaces (does not inherit) the workflow block.
 permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages-C
@@ -59,12 +63,20 @@ jobs:
     needs: export-web
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
+      actions: read
     # The repo's github-pages environment only allows `main`. That blocks
     # actions/deploy-pages on C even after export succeeds. Deploy without
     # that protected environment so style C can publish without merging.
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      # OIDC minting can time out and surface as "id-token: write" missing.
+      - name: Retry deploy to GitHub Pages
+        id: deployment-retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
