@@ -322,12 +322,12 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: '500',
-    letterSpacing: -0.8,
+    letterSpacing: -1.2,
   },
   titleNarrow: {
-    fontSize: 26,
+    fontSize: 34,
   },
   introBody: {
     color: colors.muted,

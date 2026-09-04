@@ -141,8 +141,7 @@ const responsiveCss = `
   }
   @media (min-width: 600px) {
     #root {
-      max-width: 560px;
-      box-shadow: 0 0 0 1px #171717, 0 24px 64px rgba(0, 0, 0, 0.55);
+      max-width: none;
     }
   }
   /* Compact tab bar — no extra bottom padding on web. */
