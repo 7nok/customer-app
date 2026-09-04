@@ -1,11 +1,9 @@
-import { Link, useRouter } from 'expo-router';
-import type { ComponentProps } from 'react';
+import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from '@/components/icon';
-import { Banner, Card, Screen } from '@/components/ui';
+import { Screen } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { formatDate, formatTime, summarizeHours, vehicleLabel } from '@/lib/format';
 
@@ -13,215 +11,173 @@ export default function HomeScreen() {
   const router = useRouter();
   const { profile, upcomingAppointments, weeklySlots } = useAppState();
   const nextAppointment = upcomingAppointments[0];
-  const openDays = summarizeHours(weeklySlots).filter((row) => row.hours !== 'Closed');
+  const hours = summarizeHours(weeklySlots);
 
   return (
     <Screen>
-      <View style={styles.hero}>
-        <Text style={styles.heroEyebrow}>{shop.locationLabel}</Text>
-        <Text style={styles.heroTitle}>{shop.name}</Text>
-        <Text style={styles.heroBody}>{shop.tagline}</Text>
-      </View>
-
-      <View style={styles.grid}>
-        <HomeTile
-          title="Book"
-          body="Pick an open slot"
-          icon="calendar"
-          onPress={() => router.push('/book')}
-        />
-        <HomeTile
-          title="Maintenance"
-          body="Cars & trucks"
-          icon="construct"
-          onPress={() => router.push('/maintenance')}
-        />
-        <HomeTile
-          title="Loyalty"
-          body={profile ? 'Your account' : 'Sign up here'}
-          icon="ribbon"
-          onPress={() => router.push('/loyalty')}
-        />
-        <HomeTile
-          title="About"
-          body="Joe & the shop"
-          icon="person"
-          onPress={() => router.push('/about')}
-        />
-      </View>
+      <Text style={styles.name}>{shop.name}</Text>
+      <Text style={styles.place}>{shop.locationLabel}</Text>
+      <Text style={styles.intro}>{shop.tagline}</Text>
 
       {nextAppointment ? (
-        <Card onPress={() => router.push('/book')}>
-          <Text style={styles.kicker}>Next visit</Text>
-          <Text style={styles.cardTitle}>
+        <Pressable onPress={() => router.push('/book')} style={styles.next}>
+          <Text style={styles.nextLabel}>Next visit</Text>
+          <Text style={styles.nextWhen}>
             {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
           </Text>
-          <Text style={styles.muted}>
+          <Text style={styles.nextCar}>
             {vehicleLabel(nextAppointment.year, nextAppointment.make, nextAppointment.model)}
           </Text>
-        </Card>
+        </Pressable>
       ) : (
-        <Banner>
-          No visit on the calendar yet. Book a time that already shows on Joe’s weekly schedule.
-        </Banner>
+        <Text style={styles.quiet}>No visit on the calendar yet.</Text>
       )}
 
-      {profile ? (
-        <Card onPress={() => router.push('/loyalty')}>
-          <Text style={styles.kicker}>Loyalty</Text>
-          <Text style={styles.cardTitle}>Welcome back, {profile.name.split(' ')[0]}.</Text>
-          <Text style={styles.muted}>
-            {profile.vehicles.length === 1
-              ? vehicleLabel(
-                  profile.vehicles[0].year,
-                  profile.vehicles[0].make,
-                  profile.vehicles[0].model,
-                )
-              : `${profile.vehicles.length} vehicles on your account`}
-          </Text>
-        </Card>
-      ) : (
-        <Card onPress={() => router.push('/loyalty/signup')}>
-          <Text style={styles.kicker}>Loyalty</Text>
-          <Text style={styles.cardTitle}>Join the shop list</Text>
-          <Text style={styles.muted}>
-            Leave your name, email, and vehicles on this device so Joe has them handy.
-          </Text>
-        </Card>
-      )}
+      <View style={styles.list}>
+        <IndexRow
+          num="01"
+          title="Book a time"
+          detail="Pick an open slot"
+          onPress={() => router.push('/book')}
+        />
+        <IndexRow
+          num="02"
+          title="Maintenance"
+          detail="Cars and trucks"
+          onPress={() => router.push('/maintenance')}
+        />
+        <IndexRow
+          num="03"
+          title="Loyalty"
+          detail={profile ? 'Your account' : 'Sign up'}
+          onPress={() => router.push('/loyalty')}
+        />
+        <IndexRow num="04" title="About" detail="The shop" onPress={() => router.push('/about')} />
+      </View>
 
-      <Card>
-        <Text style={styles.kicker}>This week</Text>
-        {openDays.map((row) => (
+      <View style={styles.hours}>
+        {hours.map((row) => (
           <View key={row.day} style={styles.hoursRow}>
             <Text style={styles.hoursDay}>{row.day}</Text>
             <Text style={styles.hoursTime}>{row.hours}</Text>
           </View>
         ))}
-        <Link href="/availability" style={styles.link}>
-          View or edit Joe’s available times
-        </Link>
-      </Card>
+      </View>
     </Screen>
   );
 }
 
-function HomeTile({
+function IndexRow({
+  num,
   title,
-  body,
-  icon,
+  detail,
   onPress,
 }: {
+  num: string;
   title: string;
-  body: string;
-  icon: ComponentProps<typeof Icon>['name'];
+  detail: string;
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.tile, pressed && { opacity: 0.85 }]}>
-      <View style={styles.tileIcon}>
-        <Icon name={icon} color={colors.amber} size={22} />
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.row, pressed && { opacity: 0.5 }]}>
+      <Text style={styles.num}>{num}</Text>
+      <View style={styles.rowCopy}>
+        <Text style={styles.rowTitle}>{title}</Text>
+        <Text style={styles.rowDetail}>{detail}</Text>
       </View>
-      <Text style={styles.tileTitle}>{title}</Text>
-      <Text style={styles.tileBody}>{body}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: {
-    backgroundColor: colors.navy,
-    borderRadius: radius.lg,
-    gap: 8,
-    padding: spacing.lg,
-  },
-  heroEyebrow: {
-    color: colors.amber,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  heroTitle: {
-    color: colors.cream,
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -0.6,
-  },
-  heroBody: {
-    color: '#C9D0D6',
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  tile: {
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    flexBasis: '47%',
-    flexGrow: 1,
-    gap: 6,
-    maxWidth: '100%',
-    minWidth: 140,
-    padding: spacing.md,
-  },
-  tileIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.navy,
-    borderRadius: 10,
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
-  tileTitle: {
+  name: {
     color: colors.text,
-    fontSize: 17,
-    fontWeight: '800',
+    fontSize: 22,
+    fontWeight: '500',
+    letterSpacing: -0.3,
   },
-  tileBody: {
+  place: {
     color: colors.muted,
     fontSize: 13,
-  },
-  kicker: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
     letterSpacing: 0.4,
-    textTransform: 'uppercase',
+    marginTop: 4,
   },
-  cardTitle: {
+  intro: {
     color: colors.text,
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 16,
+    lineHeight: 26,
+    marginTop: spacing.md,
+    maxWidth: 340,
   },
-  muted: {
+  next: {
+    borderBottomColor: colors.line,
+    borderBottomWidth: 1,
+    borderTopColor: colors.line,
+    borderTopWidth: 1,
+    gap: 4,
+    marginTop: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  nextLabel: {
+    color: colors.muted,
+    fontSize: 12,
+  },
+  nextWhen: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  nextCar: {
     color: colors.muted,
     fontSize: 14,
-    lineHeight: 20,
+  },
+  quiet: {
+    color: colors.muted,
+    fontSize: 14,
+    marginTop: spacing.lg,
+  },
+  list: {
+    marginTop: spacing.xl,
+  },
+  row: {
+    borderBottomColor: colors.line,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 16,
+    paddingVertical: 18,
+  },
+  num: {
+    color: colors.muted,
+    fontSize: 13,
+    width: 28,
+  },
+  rowCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  rowDetail: {
+    color: colors.muted,
+    fontSize: 14,
+  },
+  hours: {
+    gap: 8,
+    marginTop: spacing.xl,
   },
   hoursRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 8,
   },
   hoursDay: {
     color: colors.text,
-    fontWeight: '700',
+    fontSize: 13,
   },
   hoursTime: {
     color: colors.muted,
-    flexShrink: 1,
-    textAlign: 'right',
-  },
-  link: {
-    color: colors.amberDeep,
-    fontWeight: '700',
-    marginTop: 6,
+    fontSize: 13,
   },
 });
