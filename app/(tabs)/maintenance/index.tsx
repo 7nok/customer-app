@@ -1,82 +1,83 @@
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from '@/components/icon';
-import { Banner, Card, PageIntro, Screen } from '@/components/ui';
+import { Screen } from '@/components/ui';
 import { GUIDE_DISCLAIMER } from '@/constants/maintenance';
-import { colors, radius } from '@/constants/theme';
-import { useWideLayout } from '@/hooks/use-wide-layout';
+import { colors, spacing } from '@/constants/theme';
 
 export default function MaintenanceHomeScreen() {
   const router = useRouter();
-  const wide = useWideLayout(400);
 
   return (
     <Screen>
-      <PageIntro
-        eyebrow="Maintenance guide"
-        title="What should I check next?"
-        body="Start with the kind of vehicle, then pick a system. Intervals are general — Joe still wants to look at the one in your driveway."
-      />
+      <Text style={styles.kicker}>Guide</Text>
+      <Text style={styles.title}>What should I check next?</Text>
+      <Text style={styles.body}>
+        Start with the kind of vehicle, then pick a system. Intervals are general — Joe still wants
+        to look at the one in your driveway.
+      </Text>
 
-      <View style={[styles.row, !wide && styles.rowStack]}>
-        <Card
-          style={styles.choice}
-          onPress={() =>
-            router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'car' } })
-          }>
-          <View style={styles.iconWrap}>
-            <Icon name="car-outline" color={colors.text} size={28} />
-          </View>
-          <Text style={styles.choiceTitle}>Car</Text>
-          <Text style={styles.choiceBody}>Sedans, coupes, crossovers, and family vehicles.</Text>
-        </Card>
-        <Card
-          style={styles.choice}
-          onPress={() =>
-            router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'truck' } })
-          }>
-          <View style={styles.iconWrap}>
-            <Icon name="bus-outline" color={colors.text} size={28} />
-          </View>
-          <Text style={styles.choiceTitle}>Truck</Text>
-          <Text style={styles.choiceBody}>Pickups, 4x4s, and light-duty work trucks.</Text>
-        </Card>
-      </View>
+      <Pressable
+        onPress={() =>
+          router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'car' } })
+        }
+        style={({ pressed }) => [styles.row, pressed && { opacity: 0.5 }]}>
+        <Text style={styles.rowTitle}>Car</Text>
+        <Text style={styles.rowBody}>Sedans, coupes, crossovers, family vehicles.</Text>
+      </Pressable>
+      <Pressable
+        onPress={() =>
+          router.push({ pathname: '/maintenance/categories', params: { vehicleType: 'truck' } })
+        }
+        style={({ pressed }) => [styles.row, pressed && { opacity: 0.5 }]}>
+        <Text style={styles.rowTitle}>Truck</Text>
+        <Text style={styles.rowBody}>Pickups, 4x4s, and light-duty work trucks.</Text>
+      </Pressable>
 
-      <Banner>{GUIDE_DISCLAIMER}</Banner>
+      <Text style={styles.note}>{GUIDE_DISCLAIMER}</Text>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    gap: 10,
+  kicker: {
+    color: colors.muted,
+    fontSize: 12,
   },
-  rowStack: {
-    flexDirection: 'column',
-  },
-  choice: {
-    flex: 1,
-    minHeight: 148,
-  },
-  iconWrap: {
-    alignItems: 'center',
-    backgroundColor: colors.cardWarm,
-    borderRadius: radius.sm,
-    height: 48,
-    justifyContent: 'center',
-    width: 48,
-  },
-  choiceTitle: {
+  title: {
     color: colors.text,
-    fontSize: 22,
+    fontSize: 28,
+    fontWeight: '500',
+    letterSpacing: -0.4,
+    lineHeight: 36,
+    marginTop: 8,
+  },
+  body: {
+    color: colors.muted,
+    fontSize: 16,
+    lineHeight: 26,
+    marginTop: spacing.md,
+  },
+  row: {
+    borderBottomColor: colors.line,
+    borderBottomWidth: 1,
+    paddingVertical: 20,
+  },
+  rowTitle: {
+    color: colors.text,
+    fontSize: 20,
     fontWeight: '500',
   },
-  choiceBody: {
+  rowBody: {
     color: colors.muted,
     fontSize: 14,
+    lineHeight: 22,
+    marginTop: 4,
+  },
+  note: {
+    color: colors.muted,
+    fontSize: 13,
     lineHeight: 20,
+    marginTop: spacing.lg,
   },
 });

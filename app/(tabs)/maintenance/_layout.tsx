@@ -12,7 +12,7 @@ export default function MaintenanceLayout() {
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.bg },
       }}>
-      <Stack.Screen name="index" options={{ title: 'Maintenance' }} />
+      <Stack.Screen name="index" options={{ title: 'Maintenance', headerShown: false }} />
       <Stack.Screen name="categories" options={{ title: 'Categories' }} />
       <Stack.Screen name="items" options={{ title: 'Items' }} />
       <Stack.Screen name="detail" options={{ title: 'Interval' }} />

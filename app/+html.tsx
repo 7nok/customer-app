@@ -141,11 +141,11 @@ const responsiveCss = `
   }
   @media (min-width: 600px) {
     #root {
-      max-width: 560px;
-      box-shadow: 0 0 0 1px #E4E4DE, 0 18px 40px rgba(0, 0, 0, 0.06);
+      max-width: 440px;
+      box-shadow: none;
     }
   }
-  /* Compact tab bar — no extra bottom padding on web. */
+  /* Top text nav: intrinsic height only. */
   #app-tab-bar {
     flex: 0 0 auto !important;
     flex-grow: 0 !important;
@@ -153,7 +153,7 @@ const responsiveCss = `
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    background: #FFFFFF;
+    background: #F7F7F4;
     padding-bottom: 0 !important;
   }
   #app-tab-bar [role="tablist"] {
