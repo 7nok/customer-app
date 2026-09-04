@@ -1,15 +1,8 @@
 import { useRouter } from 'expo-router';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
-import {
-  Banner,
-  Card,
-  PageIntro,
-  PrimaryButton,
-  Screen,
-  SecondaryButton,
-} from '@/components/ui';
-import { colors } from '@/constants/theme';
+import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
+import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { vehicleLabel } from '@/lib/format';
 
@@ -20,14 +13,13 @@ export default function LoyaltyScreen() {
   if (!profile) {
     return (
       <Screen>
-        <PageIntro
-          eyebrow="Shop list"
-          title="Join Joe’s loyalty list"
-          body="Leave your name, email, and vehicles on this device. No points, no fake discounts — just a local account so the shop has your info."
-        />
-        <Banner>
-          This first version saves only on your device. There is no cloud login yet.
-        </Banner>
+        <Text style={styles.kicker}>List</Text>
+        <Text style={styles.title}>Join.</Text>
+        <Text style={styles.body}>
+          Name, email, and vehicles on this device. No points, no fake discounts — just a local
+          account so the shop has your info.
+        </Text>
+        <Text style={styles.note}>This first version saves only on your device.</Text>
         <PrimaryButton title="Sign up" onPress={() => router.push('/loyalty/signup')} />
       </Screen>
     );
@@ -41,75 +33,87 @@ export default function LoyaltyScreen() {
 
   return (
     <Screen>
-      <PageIntro
-        eyebrow="Shop list"
-        title={`Hi, ${profile.name.split(' ')[0]}`}
-        body="You’re on Joe’s local loyalty list. Update your vehicles anytime."
-      />
+      <Text style={styles.kicker}>List</Text>
+      <Text style={styles.title}>{profile.name.split(' ')[0]}.</Text>
+      <Text style={styles.body}>On Joe’s local list. Update vehicles anytime.</Text>
 
-      <Card>
-        <Text style={styles.label}>Name</Text>
-        <Text style={styles.value}>{profile.name}</Text>
-        <Text style={styles.label}>Email</Text>
-        <Text style={styles.value}>{profile.email}</Text>
-        <Text style={styles.label}>Joined</Text>
-        <Text style={styles.value}>{signedUp}</Text>
-      </Card>
+      <View style={styles.rule} />
+      <Text style={styles.meta}>{profile.name}</Text>
+      <Text style={styles.meta}>{profile.email}</Text>
+      <Text style={styles.note}>Joined {signedUp}</Text>
 
-      <Card>
-        <Text style={styles.label}>Vehicles</Text>
-        {profile.vehicles.map((vehicle) => (
-          <View key={vehicle.id} style={styles.vehicle}>
-            <Text style={styles.value}>
-              {vehicleLabel(vehicle.year, vehicle.make, vehicle.model)}
-            </Text>
-          </View>
-        ))}
-      </Card>
+      <View style={styles.rule} />
+      {profile.vehicles.map((vehicle) => (
+        <Text key={vehicle.id} style={styles.meta}>
+          {vehicleLabel(vehicle.year, vehicle.make, vehicle.model)}
+        </Text>
+      ))}
 
-      <Banner>
-        Saved on this device only. Clearing the app storage or tapping remove will delete the
-        account here.
-      </Banner>
+      <Text style={styles.note}>
+        Saved on this device only. Clearing app storage or tapping remove deletes the account here.
+      </Text>
 
-      <PrimaryButton title="Update account" onPress={() => router.push('/loyalty/signup')} />
-      <SecondaryButton
-        title="Remove from this device"
-        onPress={() =>
-          Alert.alert(
-            'Remove this account?',
-            'Your name, email, and vehicles will be deleted from this device.',
-            [
-              { text: 'Keep it', style: 'cancel' },
-              {
-                text: 'Remove',
-                style: 'destructive',
-                onPress: () => {
-                  void clearMember();
+      <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
+        <PrimaryButton title="Update account" onPress={() => router.push('/loyalty/signup')} />
+        <SecondaryButton
+          title="Remove from this device"
+          onPress={() =>
+            Alert.alert(
+              'Remove this account?',
+              'Your name, email, and vehicles will be deleted from this device.',
+              [
+                { text: 'Keep it', style: 'cancel' },
+                {
+                  text: 'Remove',
+                  style: 'destructive',
+                  onPress: () => {
+                    void clearMember();
+                  },
                 },
-              },
-            ],
-          )
-        }
-      />
+              ],
+            )
+          }
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  label: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
+  kicker: {
+    color: colors.muted,
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 2.4,
     textTransform: 'uppercase',
   },
-  value: {
-    color: colors.text,
-    fontSize: 17,
-    fontWeight: '600',
+  title: {
+    color: colors.white,
+    fontSize: 48,
+    fontWeight: '500',
+    letterSpacing: -1.6,
+    lineHeight: 52,
   },
-  vehicle: {
-    paddingVertical: 2,
+  body: {
+    color: colors.muted,
+    fontSize: 17,
+    lineHeight: 26,
+    marginBottom: spacing.sm,
+  },
+  note: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 20,
+    marginTop: spacing.sm,
+  },
+  rule: {
+    backgroundColor: colors.line,
+    height: 1,
+    marginVertical: spacing.md,
+  },
+  meta: {
+    color: colors.text,
+    fontSize: 16,
+    lineHeight: 24,
   },
 });

@@ -117,7 +117,7 @@ export function PrimaryButton({
         pressed && !isBusy && styles.pressed,
       ]}>
       {isBusy ? (
-        <ActivityIndicator color={colors.navy} />
+        <ActivityIndicator color={colors.bg} />
       ) : (
         <Text style={styles.primaryLabel}>{title}</Text>
       )}
@@ -208,7 +208,7 @@ export function ListRow({
     <>
       {icon ? (
         <View style={styles.rowIcon}>
-          <Icon name={icon} color={colors.amberDeep} size={20} />
+          <Icon name={icon} color={colors.cream} size={20} />
         </View>
       ) : null}
       <View style={styles.rowCopy}>
@@ -315,24 +315,24 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     color: colors.amberDeep,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.6,
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 2.2,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 28,
-    fontWeight: '700',
-    letterSpacing: -0.4,
+    fontSize: 40,
+    fontWeight: '500',
+    letterSpacing: -1.2,
   },
   titleNarrow: {
-    fontSize: 24,
+    fontSize: 34,
   },
   introBody: {
     color: colors.muted,
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   card: {
     backgroundColor: colors.card,
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     padding: spacing.md,
-    gap: 8,
+    gap: 10,
   },
   pressed: {
     opacity: 0.82,
@@ -358,13 +358,14 @@ const styles = StyleSheet.create({
     opacity: 0.78,
   },
   primaryLabel: {
-    color: colors.navy,
-    fontSize: 16,
-    fontWeight: '800',
+    color: colors.bg,
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: 0.4,
   },
   secondary: {
     alignItems: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: 'transparent',
     borderColor: colors.line,
     borderRadius: radius.sm,
     borderWidth: 1,
@@ -374,9 +375,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   secondaryLabel: {
-    color: colors.navy,
+    color: colors.text,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '500',
   },
   disabled: {
     opacity: 0.45,
@@ -386,11 +387,12 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     color: colors.text,
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
   input: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.charcoal,
     borderColor: colors.line,
     borderRadius: radius.sm,
     borderWidth: 1,
@@ -426,7 +428,7 @@ const styles = StyleSheet.create({
   rowIcon: {
     alignItems: 'center',
     backgroundColor: colors.amberSoft,
-    borderRadius: 10,
+    borderRadius: radius.sm,
     height: 36,
     justifyContent: 'center',
     width: 36,
@@ -438,7 +440,7 @@ const styles = StyleSheet.create({
   rowTitle: {
     color: colors.text,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '500',
   },
   rowSubtitle: {
     color: colors.muted,
@@ -446,9 +448,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   chip: {
-    backgroundColor: colors.card,
+    backgroundColor: 'transparent',
     borderColor: colors.line,
-    borderRadius: 999,
+    borderRadius: radius.sm,
     borderWidth: 1,
     cursor: 'pointer',
     minHeight: 44,
@@ -457,8 +459,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   chipSelected: {
-    backgroundColor: colors.navy,
-    borderColor: colors.navy,
+    backgroundColor: colors.white,
+    borderColor: colors.white,
   },
   chipDisabled: {
     opacity: 0.4,
@@ -466,9 +468,9 @@ const styles = StyleSheet.create({
   chipLabel: {
     color: colors.text,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '500',
   },
   chipLabelSelected: {
-    color: colors.cream,
+    color: colors.bg,
   },
 });

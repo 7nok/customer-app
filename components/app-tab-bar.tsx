@@ -4,12 +4,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors } from '@/constants/theme';
 
-/** Icon + label row. Keep this compact — do not stretch to leftover viewport. */
-export const TAB_BAR_CONTENT_HEIGHT = 64;
+/** Icon-only dock. Keep compact — do not stretch to leftover viewport. */
+export const TAB_BAR_CONTENT_HEIGHT = 52;
 
 /**
- * Compact bottom tabs. Web padding is 0 — the shell is already pinned to the
- * visible viewport; extra safe-area padding was painting a navy slab.
+ * Minimal bottom chrome. Web padding is 0 — the shell is already pinned to the
+ * visible viewport; extra safe-area padding was painting a slab under the dock.
  */
 export function AppTabBar(props: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
@@ -19,7 +19,9 @@ export function AppTabBar(props: BottomTabBarProps) {
     <View
       nativeID="app-tab-bar"
       style={{
-        backgroundColor: colors.navy,
+        backgroundColor: colors.bg,
+        borderTopColor: colors.line,
+        borderTopWidth: 1,
         flexGrow: 0,
         flexShrink: 0,
         overflow: 'visible',

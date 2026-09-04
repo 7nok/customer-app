@@ -1,11 +1,9 @@
-import { Link, useRouter } from 'expo-router';
-import type { ComponentProps } from 'react';
+import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from '@/components/icon';
-import { Banner, Card, Screen } from '@/components/ui';
+import { PrimaryButton, Screen } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { formatDate, formatTime, summarizeHours, vehicleLabel } from '@/lib/format';
 
@@ -16,212 +14,144 @@ export default function HomeScreen() {
   const openDays = summarizeHours(weeklySlots).filter((row) => row.hours !== 'Closed');
 
   return (
-    <Screen>
-      <View style={styles.hero}>
-        <Text style={styles.heroEyebrow}>{shop.locationLabel}</Text>
-        <Text style={styles.heroTitle}>{shop.name}</Text>
-        <Text style={styles.heroBody}>{shop.tagline}</Text>
+    <Screen padded={false}>
+      <View style={styles.stage}>
+        <Text style={styles.kicker}>{shop.locationLabel}</Text>
+        <Text style={styles.wordmark}>{shop.name}</Text>
+        <Text style={styles.tagline}>{shop.tagline}</Text>
+
+        <View style={styles.cta}>
+          <PrimaryButton title="Book a visit" onPress={() => router.push('/book')} />
+        </View>
+
+        {nextAppointment ? (
+          <Pressable onPress={() => router.push('/book')} style={styles.nextLine}>
+            <Text style={styles.nextKicker}>Next</Text>
+            <Text style={styles.nextCopy}>
+              {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
+              {'  '}
+              {vehicleLabel(nextAppointment.year, nextAppointment.make, nextAppointment.model)}
+            </Text>
+          </Pressable>
+        ) : null}
+
+        <View style={styles.links}>
+          <LaunchRow index="01" title="Service" onPress={() => router.push('/book')} />
+          <LaunchRow index="02" title="Guide" onPress={() => router.push('/maintenance')} />
+          <LaunchRow
+            index="03"
+            title={profile ? profile.name.split(' ')[0] : 'List'}
+            onPress={() => router.push('/loyalty')}
+          />
+          <LaunchRow index="04" title="Shop" onPress={() => router.push('/about')} />
+        </View>
+
+        <Text style={styles.hours}>
+          {openDays.length
+            ? openDays.map((row) => `${row.day} ${row.hours}`).join('  ·  ')
+            : 'Hours on the shop page'}
+        </Text>
       </View>
-
-      <View style={styles.grid}>
-        <HomeTile
-          title="Book"
-          body="Pick an open slot"
-          icon="calendar"
-          onPress={() => router.push('/book')}
-        />
-        <HomeTile
-          title="Maintenance"
-          body="Cars & trucks"
-          icon="construct"
-          onPress={() => router.push('/maintenance')}
-        />
-        <HomeTile
-          title="Loyalty"
-          body={profile ? 'Your account' : 'Sign up here'}
-          icon="ribbon"
-          onPress={() => router.push('/loyalty')}
-        />
-        <HomeTile
-          title="About"
-          body="Joe & the shop"
-          icon="person"
-          onPress={() => router.push('/about')}
-        />
-      </View>
-
-      {nextAppointment ? (
-        <Card onPress={() => router.push('/book')}>
-          <Text style={styles.kicker}>Next visit</Text>
-          <Text style={styles.cardTitle}>
-            {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
-          </Text>
-          <Text style={styles.muted}>
-            {vehicleLabel(nextAppointment.year, nextAppointment.make, nextAppointment.model)}
-          </Text>
-        </Card>
-      ) : (
-        <Banner>
-          No visit on the calendar yet. Book a time that already shows on Joe’s weekly schedule.
-        </Banner>
-      )}
-
-      {profile ? (
-        <Card onPress={() => router.push('/loyalty')}>
-          <Text style={styles.kicker}>Loyalty</Text>
-          <Text style={styles.cardTitle}>Welcome back, {profile.name.split(' ')[0]}.</Text>
-          <Text style={styles.muted}>
-            {profile.vehicles.length === 1
-              ? vehicleLabel(
-                  profile.vehicles[0].year,
-                  profile.vehicles[0].make,
-                  profile.vehicles[0].model,
-                )
-              : `${profile.vehicles.length} vehicles on your account`}
-          </Text>
-        </Card>
-      ) : (
-        <Card onPress={() => router.push('/loyalty/signup')}>
-          <Text style={styles.kicker}>Loyalty</Text>
-          <Text style={styles.cardTitle}>Join the shop list</Text>
-          <Text style={styles.muted}>
-            Leave your name, email, and vehicles on this device so Joe has them handy.
-          </Text>
-        </Card>
-      )}
-
-      <Card>
-        <Text style={styles.kicker}>This week</Text>
-        {openDays.map((row) => (
-          <View key={row.day} style={styles.hoursRow}>
-            <Text style={styles.hoursDay}>{row.day}</Text>
-            <Text style={styles.hoursTime}>{row.hours}</Text>
-          </View>
-        ))}
-        <Link href="/availability" style={styles.link}>
-          View or edit Joe’s available times
-        </Link>
-      </Card>
     </Screen>
   );
 }
 
-function HomeTile({
+function LaunchRow({
+  index,
   title,
-  body,
-  icon,
   onPress,
 }: {
+  index: string;
   title: string;
-  body: string;
-  icon: ComponentProps<typeof Icon>['name'];
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.tile, pressed && { opacity: 0.85 }]}>
-      <View style={styles.tileIcon}>
-        <Icon name={icon} color={colors.amber} size={22} />
-      </View>
-      <Text style={styles.tileTitle}>{title}</Text>
-      <Text style={styles.tileBody}>{body}</Text>
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.row, pressed && { opacity: 0.55 }]}>
+      <Text style={styles.rowIndex}>{index}</Text>
+      <Text style={styles.rowTitle}>{title}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: {
-    backgroundColor: colors.navy,
-    borderRadius: radius.lg,
-    gap: 8,
-    padding: spacing.lg,
-  },
-  heroEyebrow: {
-    color: colors.amber,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  heroTitle: {
-    color: colors.cream,
-    fontSize: 32,
-    fontWeight: '800',
-    letterSpacing: -0.6,
-  },
-  heroBody: {
-    color: '#C9D0D6',
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  tile: {
-    backgroundColor: colors.card,
-    borderColor: colors.line,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    flexBasis: '47%',
+  stage: {
     flexGrow: 1,
-    gap: 6,
-    maxWidth: '100%',
-    minWidth: 140,
-    padding: spacing.md,
-  },
-  tileIcon: {
-    alignItems: 'center',
-    backgroundColor: colors.navy,
-    borderRadius: 10,
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
-  tileTitle: {
-    color: colors.text,
-    fontSize: 17,
-    fontWeight: '800',
-  },
-  tileBody: {
-    color: colors.muted,
-    fontSize: 13,
+    justifyContent: 'flex-end',
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    gap: spacing.md,
   },
   kicker: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
+    color: colors.muted,
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 3,
     textTransform: 'uppercase',
   },
-  cardTitle: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: '800',
+  wordmark: {
+    color: colors.white,
+    fontSize: 64,
+    fontWeight: '500',
+    letterSpacing: -2.4,
+    lineHeight: 68,
   },
-  muted: {
+  tagline: {
     color: colors.muted,
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 17,
+    lineHeight: 26,
+    maxWidth: 320,
   },
-  hoursRow: {
+  cta: {
+    marginTop: spacing.sm,
+    maxWidth: 420,
+  },
+  nextLine: {
+    gap: 4,
+    marginTop: spacing.sm,
+  },
+  nextKicker: {
+    color: colors.muted,
+    fontSize: 11,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  nextCopy: {
+    color: colors.text,
+    fontSize: 15,
+  },
+  links: {
+    borderTopColor: colors.line,
+    borderTopWidth: 1,
+    marginTop: spacing.md,
+  },
+  row: {
+    alignItems: 'baseline',
+    borderBottomColor: colors.line,
+    borderBottomWidth: 1,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 8,
+    gap: 16,
+    minHeight: 56,
+    paddingVertical: 16,
   },
-  hoursDay: {
-    color: colors.text,
-    fontWeight: '700',
-  },
-  hoursTime: {
+  rowIndex: {
     color: colors.muted,
-    flexShrink: 1,
-    textAlign: 'right',
+    fontSize: 13,
+    fontWeight: '500',
+    letterSpacing: 1,
+    width: 28,
   },
-  link: {
-    color: colors.amberDeep,
-    fontWeight: '700',
-    marginTop: 6,
+  rowTitle: {
+    color: colors.white,
+    fontSize: 22,
+    fontWeight: '500',
+    letterSpacing: -0.4,
+  },
+  hours: {
+    color: colors.muted,
+    fontSize: 12,
+    letterSpacing: 0.2,
+    lineHeight: 18,
+    marginTop: spacing.sm,
   },
 });

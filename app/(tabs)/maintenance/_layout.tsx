@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 
 export default function MaintenanceLayout() {
   return (
@@ -8,11 +8,11 @@ export default function MaintenanceLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.navy },
         headerTintColor: colors.cream,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: type.header,
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.bg },
       }}>
-      <Stack.Screen name="index" options={{ title: 'Maintenance' }} />
+      <Stack.Screen name="index" options={{ title: 'Maintenance', headerShown: false }} />
       <Stack.Screen name="categories" options={{ title: 'Categories' }} />
       <Stack.Screen name="items" options={{ title: 'Items' }} />
       <Stack.Screen name="detail" options={{ title: 'Interval' }} />
