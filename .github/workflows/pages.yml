@@ -15,10 +15,6 @@ permissions:
   id-token: write
   actions: read
 
-concurrency:
-  group: pages-C
-  cancel-in-progress: false
-
 jobs:
   export-web:
     runs-on: ubuntu-latest
@@ -62,6 +58,11 @@ jobs:
     if: github.ref == 'refs/heads/C' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: export-web
     runs-on: ubuntu-latest
+    # Only the deploy job uses pages-C. Workflow-level concurrency let PR
+    # export runs cancel a pending push deploy (the permission-fix push).
+    concurrency:
+      group: pages-C
+      cancel-in-progress: false
     permissions:
       contents: read
       pages: write
