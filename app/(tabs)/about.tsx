@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
-import { Banner, Card, PageIntro, PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
+import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { summarizeHours } from '@/lib/format';
 
@@ -14,116 +14,113 @@ export default function AboutScreen() {
 
   return (
     <Screen>
-      <PageIntro eyebrow="About Me" title={`${shop.name} · ${shop.locationLabel}`} body={shop.tagline} />
+      <Text style={styles.kicker}>Shop</Text>
+      <Text style={styles.title}>
+        {shop.name}
+        {'\n'}
+        {shop.locationLabel}
+      </Text>
+      <Text style={styles.tag}>{shop.tagline}</Text>
 
-      <Card>
-        {shop.placeholderBio.map((paragraph) => (
-          <Text
-            key={paragraph}
-            style={[styles.bio, paragraph.startsWith('[PLACEHOLDER') && styles.placeholder]}>
-            {paragraph}
-          </Text>
-        ))}
-      </Card>
+      {shop.placeholderBio.map((paragraph) => (
+        <Text
+          key={paragraph}
+          style={[styles.bio, paragraph.startsWith('[PLACEHOLDER') && styles.placeholder]}>
+          {paragraph}
+        </Text>
+      ))}
 
-      <Card>
-        <Text style={styles.label}>What we work on</Text>
-        {shop.workList.map((item) => (
-          <Text key={item} style={styles.body}>
-            • {item}
-          </Text>
-        ))}
-      </Card>
+      <Text style={styles.kicker}>Work</Text>
+      {shop.workList.map((item) => (
+        <Text key={item} style={styles.item}>
+          {item}
+        </Text>
+      ))}
 
-      <Card>
-        <Text style={styles.label}>Find us</Text>
-        <Text style={styles.value}>{shop.locationLabel}</Text>
-        <Text style={styles.muted}>Street address can be added when Joe has a shop line on the books.</Text>
-        <Text style={styles.label}>Phone</Text>
-        <Text style={styles.value}>{shop.phone}</Text>
-        <Text style={styles.muted}>{shop.phoneNote}</Text>
-      </Card>
+      <Text style={styles.kicker}>Hours</Text>
+      {hours.map((row) => (
+        <View key={row.day} style={styles.hoursRow}>
+          <Text style={styles.hoursDay}>{row.day}</Text>
+          <Text style={styles.hoursTime}>{row.hours}</Text>
+        </View>
+      ))}
 
-      <Card>
-        <Text style={styles.label}>Weekly hours</Text>
-        {hours.map((row) => (
-          <View key={row.day} style={styles.hoursRow}>
-            <Text style={styles.hoursDay}>{row.day}</Text>
-            <Text style={styles.hoursTime}>{row.hours}</Text>
-          </View>
-        ))}
-      </Card>
+      <Text style={styles.kicker}>Contact</Text>
+      <Text style={styles.item}>{shop.phone}</Text>
+      <Text style={styles.note}>{shop.phoneNote}</Text>
 
-      <Banner>
-        Hours and open appointment slots are the same weekly schedule Joe can edit in Shop hours.
-      </Banner>
-
-      <PrimaryButton
-        title="Call the placeholder line"
-        onPress={() => {
-          void Linking.openURL(`tel:${shop.phoneTel}`);
-        }}
-      />
-      <SecondaryButton
-        title="Open Hillsboro, TX in maps"
-        onPress={() => {
-          void Linking.openURL(
-            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery)}`,
-          );
-        }}
-      />
-      <SecondaryButton title="Joe: set available times" onPress={() => router.push('/availability')} />
+      <View style={{ gap: spacing.sm, marginTop: spacing.lg }}>
+        <PrimaryButton
+          title="Call the placeholder line"
+          onPress={() => {
+            void Linking.openURL(`tel:${shop.phoneTel}`);
+          }}
+        />
+        <SecondaryButton
+          title="Open Hillsboro, TX in maps"
+          onPress={() => {
+            void Linking.openURL(
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery)}`,
+            );
+          }}
+        />
+        <SecondaryButton title="Joe: set available times" onPress={() => router.push('/availability')} />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  kicker: {
+    color: colors.muted,
+    fontSize: 12,
+    marginBottom: 8,
+    marginTop: spacing.lg,
+  },
+  title: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: '500',
+    letterSpacing: -0.4,
+    lineHeight: 36,
+  },
+  tag: {
+    color: colors.muted,
+    fontSize: 16,
+    lineHeight: 24,
+    marginTop: spacing.sm,
+  },
   bio: {
     color: colors.text,
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 28,
+    marginTop: spacing.md,
   },
   placeholder: {
     color: colors.warn,
-    fontWeight: '700',
+    fontWeight: '600',
   },
-  label: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-  },
-  value: {
-    color: colors.text,
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  body: {
+  item: {
     color: colors.text,
     fontSize: 16,
-    lineHeight: 22,
+    lineHeight: 26,
   },
-  muted: {
+  note: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 20,
   },
   hoursRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 8,
+    paddingVertical: 4,
   },
   hoursDay: {
     color: colors.text,
-    fontWeight: '700',
-    minWidth: 88,
+    fontSize: 15,
   },
   hoursTime: {
     color: colors.muted,
-    flexGrow: 1,
-    flexShrink: 1,
-    textAlign: 'right',
+    fontSize: 15,
   },
 });
