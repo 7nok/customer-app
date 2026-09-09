@@ -20,13 +20,14 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { injectSwitcherIntoDist } from './inject-switcher.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const WORK = join(ROOT, '.preview-work');
+const WORK = resolve(process.env.PREVIEW_WORK_DIR || join(tmpdir(), 'customer-app-preview-work'));
 const DIST = join(ROOT, 'dist');
 const PREVIEW = join(ROOT, 'preview');
 const PAGES_PREFIX = '/customer-app';
@@ -80,9 +81,16 @@ function emptyDir(dir) {
 
 function copyWorktree(dest) {
   emptyDir(dest);
-  // Cannot fs.cpSync(ROOT → ROOT/.preview-work/…) — Node rejects copy-into-self.
-  const excludes = [...SKIP_COPY].flatMap((name) => ['--exclude', name]);
-  execFileSync('rsync', ['-a', '--delete', ...excludes, `${ROOT}/`, `${dest}/`]);
+  cpSync(ROOT, dest, {
+    recursive: true,
+    filter: (source) => {
+      if (source === ROOT) {
+        return true;
+      }
+      const top = relative(ROOT, source).split('/')[0];
+      return !SKIP_COPY.has(top);
+    },
+  });
 }
 
 function archiveRef(ref, dest) {
@@ -185,6 +193,7 @@ function writeSources(resolved) {
 
 function main() {
   const typecheck = process.argv.includes('--typecheck');
+  log(`Work dir ${WORK}`);
   mkdirSync(WORK, { recursive: true });
   emptyDir(DIST);
 
