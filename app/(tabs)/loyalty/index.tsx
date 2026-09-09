@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors, spacing } from '@/constants/theme';
+import { colors, fonts, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { vehicleLabel } from '@/lib/format';
 
@@ -14,11 +14,11 @@ export default function LoyaltyScreen() {
   if (!profile) {
     return (
       <Screen>
-        <Text style={styles.kicker}>Rewards</Text>
-        <Text style={styles.title}>Join.</Text>
+        <Text style={styles.job}>REWARDS</Text>
+        <Text style={styles.title}>JOIN THE LIST</Text>
         <Text style={styles.body}>{shop.rewardsNote}</Text>
-        <Text style={styles.note}>Name, vehicles, and your email — saved on this device only.</Text>
-        <PrimaryButton title="Sign up" onPress={() => router.push('/loyalty/signup')} />
+        <Text style={styles.muted}>NAME, VEHICLES, EMAIL — THIS DEVICE ONLY</Text>
+        <PrimaryButton title="SIGN UP" onPress={() => router.push('/loyalty/signup')} />
       </Screen>
     );
   }
@@ -31,31 +31,30 @@ export default function LoyaltyScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>Rewards</Text>
-      <Text style={styles.title}>{profile.name.split(' ')[0]}.</Text>
+      <Text style={styles.job}>REWARDS</Text>
+      <Text style={styles.title}>{profile.name.split(' ')[0].toUpperCase()}</Text>
       <Text style={styles.body}>On the Daily Drivin list. Update vehicles anytime.</Text>
-      <Text style={styles.note}>{shop.rewardsNote}</Text>
+      <Text style={styles.muted}>{shop.rewardsNote}</Text>
 
-      <View style={styles.rule} />
-      <Text style={styles.meta}>{profile.name}</Text>
-      <Text style={styles.meta}>{profile.email}</Text>
-      <Text style={styles.note}>Joined {signedUp}</Text>
+      <View style={styles.file}>
+        <Text style={styles.meta}>{profile.name.toUpperCase()}</Text>
+        <Text style={styles.meta}>{profile.email}</Text>
+        <Text style={styles.muted}>JOINED {signedUp.toUpperCase()}</Text>
+        {profile.vehicles.map((vehicle) => (
+          <Text key={vehicle.id} style={styles.car}>
+            {vehicleLabel(vehicle.year, vehicle.make, vehicle.model).toUpperCase()}
+          </Text>
+        ))}
+      </View>
 
-      <View style={styles.rule} />
-      {profile.vehicles.map((vehicle) => (
-        <Text key={vehicle.id} style={styles.meta}>
-          {vehicleLabel(vehicle.year, vehicle.make, vehicle.model)}
-        </Text>
-      ))}
-
-      <Text style={styles.note}>
-        Saved on this device only. Clearing app storage or tapping remove deletes the account here.
+      <Text style={styles.muted}>
+        SAVED ON THIS DEVICE ONLY. REMOVE DELETES THE ACCOUNT HERE.
       </Text>
 
       <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
-        <PrimaryButton title="Update account" onPress={() => router.push('/loyalty/signup')} />
+        <PrimaryButton title="UPDATE ACCOUNT" onPress={() => router.push('/loyalty/signup')} />
         <SecondaryButton
-          title="Remove from this device"
+          title="REMOVE FROM THIS DEVICE"
           onPress={() =>
             Alert.alert(
               'Remove this account?',
@@ -79,40 +78,48 @@ export default function LoyaltyScreen() {
 }
 
 const styles = StyleSheet.create({
-  kicker: {
-    color: colors.muted,
+  job: {
+    color: colors.amber,
+    fontFamily: fonts.mono,
     fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 2.4,
-    textTransform: 'uppercase',
+    letterSpacing: 1.8,
   },
   title: {
-    color: colors.white,
-    fontSize: 48,
-    fontWeight: '500',
-    letterSpacing: -1.6,
-    lineHeight: 52,
+    color: colors.text,
+    fontSize: 40,
+    fontWeight: '800',
+    letterSpacing: 1,
+    marginTop: 6,
   },
   body: {
-    color: colors.muted,
-    fontSize: 17,
-    lineHeight: 26,
-    marginBottom: spacing.sm,
-  },
-  note: {
-    color: colors.muted,
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: spacing.sm,
-  },
-  rule: {
-    backgroundColor: colors.line,
-    height: 1,
-    marginVertical: spacing.md,
-  },
-  meta: {
     color: colors.text,
     fontSize: 16,
     lineHeight: 24,
+    marginTop: spacing.sm,
+  },
+  muted: {
+    color: colors.muted,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: spacing.sm,
+  },
+  file: {
+    borderColor: colors.line,
+    borderWidth: 1,
+    gap: 6,
+    marginTop: spacing.md,
+    padding: spacing.md,
+  },
+  meta: {
+    color: colors.text,
+    fontFamily: fonts.mono,
+    fontSize: 13,
+  },
+  car: {
+    color: colors.amber,
+    fontFamily: fonts.mono,
+    fontSize: 13,
+    marginTop: 8,
   },
 });

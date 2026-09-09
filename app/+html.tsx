@@ -16,7 +16,7 @@ export default function Root({ children }: PropsWithChildren) {
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
         />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#121410" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -112,7 +112,7 @@ const responsiveCss = `
     max-width: 100%;
     overflow: hidden;
     overscroll-behavior: none;
-    background: #000000;
+    background: #121410;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -133,15 +133,19 @@ const responsiveCss = `
     min-height: 0;
     margin: 0 auto;
     overflow: hidden;
-    background: #000000;
+    background: #121410;
   }
   #root > * {
     flex: 1 1 auto;
     min-height: 0;
   }
   @media (min-width: 600px) {
+    html, body {
+      background: #0C0E0A;
+    }
     #root {
-      max-width: none;
+      max-width: 640px;
+      box-shadow: 0 0 0 1px #3A4034;
     }
   }
   /* Compact tab bar — no extra bottom padding on web. */
@@ -152,7 +156,7 @@ const responsiveCss = `
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    background: #000000;
+    background: #121410;
     padding-bottom: 0 !important;
   }
   #app-tab-bar [role="tablist"] {

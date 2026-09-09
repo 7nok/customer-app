@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, fonts, radius, spacing } from '@/constants/theme';
 import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export function Screen({
@@ -314,20 +314,22 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   eyebrow: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: 2.2,
+    color: colors.amber,
+    fontFamily: fonts.mono,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.8,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 40,
-    fontWeight: '500',
-    letterSpacing: -1.2,
+    fontSize: 34,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
   },
   titleNarrow: {
-    fontSize: 34,
+    fontSize: 28,
   },
   introBody: {
     color: colors.muted,
@@ -348,7 +350,7 @@ const styles = StyleSheet.create({
   primary: {
     alignItems: 'center',
     backgroundColor: colors.amber,
-    borderRadius: radius.sm,
+    borderRadius: 0,
     cursor: 'pointer',
     minHeight: 52,
     justifyContent: 'center',
@@ -359,15 +361,16 @@ const styles = StyleSheet.create({
   },
   primaryLabel: {
     color: colors.bg,
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.4,
+    fontFamily: fonts.mono,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 1.2,
   },
   secondary: {
     alignItems: 'center',
     backgroundColor: 'transparent',
     borderColor: colors.line,
-    borderRadius: radius.sm,
+    borderRadius: 0,
     borderWidth: 1,
     cursor: 'pointer',
     minHeight: 48,
@@ -376,8 +379,10 @@ const styles = StyleSheet.create({
   },
   secondaryLabel: {
     color: colors.text,
-    fontSize: 15,
-    fontWeight: '500',
+    fontFamily: fonts.mono,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   disabled: {
     opacity: 0.45,
@@ -394,7 +399,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.charcoal,
     borderColor: colors.line,
-    borderRadius: radius.sm,
+    borderRadius: 0,
     borderWidth: 1,
     color: colors.text,
     fontSize: 16,
@@ -450,7 +455,7 @@ const styles = StyleSheet.create({
   chip: {
     backgroundColor: 'transparent',
     borderColor: colors.line,
-    borderRadius: radius.sm,
+    borderRadius: 0,
     borderWidth: 1,
     cursor: 'pointer',
     minHeight: 44,
@@ -459,16 +464,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   chipSelected: {
-    backgroundColor: colors.white,
-    borderColor: colors.white,
+    backgroundColor: colors.amber,
+    borderColor: colors.amber,
   },
   chipDisabled: {
     opacity: 0.4,
   },
   chipLabel: {
     color: colors.text,
-    fontSize: 13,
-    fontWeight: '500',
+    fontFamily: fonts.mono,
+    fontSize: 12,
+    fontWeight: '700',
   },
   chipLabelSelected: {
     color: colors.bg,
