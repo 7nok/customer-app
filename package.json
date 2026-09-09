@@ -11,7 +11,8 @@
     "export:web": "expo export --platform web",
     "preview:pages": "npm run export:web && node scripts/preview-pages.mjs",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:shell": "node --experimental-strip-types --test lib/visible-shell.test.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
