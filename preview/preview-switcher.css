@@ -1,0 +1,60 @@
+/* Preview-only chrome. Does not size #root or the iPhone visual viewport. */
+#preview-switcher {
+  position: fixed;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 16px;
+  background: rgba(12, 12, 12, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: auto;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+#preview-switcher .preview-switcher-label {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 2px 4px 0;
+}
+
+#preview-switcher button {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 36px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #f4f4f4;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#preview-switcher button.is-active {
+  background: #f4f4f4;
+  color: #111;
+}
+
+#preview-switcher button:focus-visible {
+  outline: 2px solid #f4f4f4;
+  outline-offset: 2px;
+}
