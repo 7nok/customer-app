@@ -9,8 +9,8 @@ export type VisibleShellBox = {
  *
  * Grok / in-app WKWebViews often report visualViewport.height shorter than
  * innerHeight with offsetTop === 0. Treat that leftover as a *top* inset and
- * stretch the shell to the layout bottom so the dock sits flush above chrome
- * instead of hanging mid-page over a body-colored slab.
+ * stretch the shell to the layout bottom so the dock can sit on the visible
+ * viewport bottom (dock-correct-bottom.png) instead of hanging mid-list.
  *
  * When offsetTop is a real inset and there is no leftover below the visual
  * viewport (Safari URL bar), size the shell to that band only.

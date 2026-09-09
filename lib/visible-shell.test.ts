@@ -29,3 +29,12 @@ test('missing visualViewport fills the layout viewport', () => {
   assert.equal(box.height, 800);
   assert.equal(box.pinToBottom, true);
 });
+
+test('Grok leftover-as-top-inset still reaches the layout bottom for the dock', () => {
+  const box = computeVisibleShellBox({
+    innerHeight: 844,
+    visualViewport: { height: 650, offsetTop: 0, scale: 1 },
+  });
+  assert.equal(box.top + box.height, 844);
+  assert.equal(box.pinToBottom, true);
+});

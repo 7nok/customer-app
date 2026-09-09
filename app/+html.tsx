@@ -30,6 +30,7 @@ export default function Root({ children }: PropsWithChildren) {
       </head>
       <body>
         {children}
+        <div id="app-dock-host" data-dock-edge="bottom" />
         <script dangerouslySetInnerHTML={{ __html: visualViewportLockScript }} />
       </body>
     </html>
@@ -37,9 +38,9 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 /**
- * First paint: #root stretches from the top safe area to the layout bottom
- * (no 100vh / 100svh). The dock is position:fixed to that same bottom so a
- * short React Native `visualViewport` window cannot leave it hanging mid-page.
+ * First paint: #root stretches to the layout bottom. `#app-dock-host` is a
+ * sibling of `#root`, pinned to the visible viewport bottom so the icon dock
+ * matches dock-correct-bottom.png immediately — content may sit under it.
  *
  * Script is after `#root` so the first measure can style the shell before
  * paint. Keep in sync with `hooks/use-lock-to-visual-viewport.ts`.
@@ -71,16 +72,29 @@ const visualViewportLockScript = `(function(){
     if (height <= 0 && inner > 0) height = inner - top;
     return { top: top, height: height, pinToBottom: pinToBottom };
   }
-  function pinDock(dock) {
-    if (!dock) return;
-    dock.style.position = 'fixed';
-    dock.style.left = '0px';
-    dock.style.right = '0px';
-    dock.style.bottom = '0px';
-    dock.style.top = 'auto';
-    dock.style.zIndex = '20';
-    dock.style.flexGrow = '0';
-    dock.style.flexShrink = '0';
+  function pinDockHost() {
+    var host = document.getElementById('app-dock-host');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'app-dock-host';
+      host.setAttribute('data-dock-edge', 'bottom');
+      document.body.appendChild(host);
+    }
+    host.style.position = 'fixed';
+    host.style.left = '0px';
+    host.style.right = '0px';
+    host.style.bottom = '0px';
+    host.style.top = 'auto';
+    host.style.zIndex = '20';
+    host.style.pointerEvents = 'none';
+    var dock = document.getElementById('app-tab-bar');
+    if (dock && dock.parentNode !== host) {
+      host.appendChild(dock);
+    }
+    if (dock) {
+      dock.style.pointerEvents = 'auto';
+      dock.style.width = '100%';
+    }
   }
   function measure() {
     var next = box();
@@ -102,7 +116,7 @@ const visualViewportLockScript = `(function(){
         root.style.maxHeight = h;
       }
     }
-    pinDock(document.getElementById('app-tab-bar'));
+    pinDockHost();
   }
   window.__lockAppToVisualViewport = measure;
   measure();
@@ -174,14 +188,24 @@ const responsiveCss = `
       max-width: none;
     }
   }
-  /* Pin the dock to the layout bottom on first paint — do not wait for hydration
-     or a visualViewport resize. RN Web sizes the app to visualViewport.height,
-     which is shorter than the layout viewport in Grok's in-app browser. */
-  #app-tab-bar {
+  /* Host lives outside #root so first paint matches dock-correct-bottom.png:
+     pinned to the visible viewport bottom, just above in-app chrome. RN Web
+     ancestors cannot trap this in a short visualViewport containing block. */
+  #app-dock-host {
     position: fixed !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
+    top: auto !important;
+    z-index: 20;
+    width: 100%;
+    pointer-events: none;
+  }
+  #app-tab-bar {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
     top: auto !important;
     z-index: 20;
     flex: 0 0 auto !important;
@@ -192,6 +216,8 @@ const responsiveCss = `
     overflow: visible !important;
     background: #000000;
     padding-bottom: 0 !important;
+    pointer-events: auto;
+    width: 100%;
   }
   #app-tab-bar [role="tablist"] {
     overflow: visible !important;

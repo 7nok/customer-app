@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { Platform } from 'react-native';
 
+import { pinWebDockHost } from '@/components/web-dock-portal';
 import { computeVisibleShellBox } from '@/lib/visible-shell';
 
 declare global {
@@ -42,6 +43,7 @@ export function measureVisibleViewport(): void {
     }
   }
 
+  pinWebDockHost();
   window.__lockAppToVisualViewport = measureVisibleViewport;
 }
 
