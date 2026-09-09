@@ -80,16 +80,9 @@ function emptyDir(dir) {
 
 function copyWorktree(dest) {
   emptyDir(dest);
-  cpSync(ROOT, dest, {
-    recursive: true,
-    filter: (source) => {
-      if (source === ROOT) {
-        return true;
-      }
-      const top = relative(ROOT, source).split('/')[0];
-      return !SKIP_COPY.has(top);
-    },
-  });
+  // Cannot fs.cpSync(ROOT → ROOT/.preview-work/…) — Node rejects copy-into-self.
+  const excludes = SKIP_COPY.flatMap((name) => ['--exclude', name]);
+  execFileSync('rsync', ['-a', '--delete', ...excludes, `${ROOT}/`, `${dest}/`]);
 }
 
 function archiveRef(ref, dest) {
