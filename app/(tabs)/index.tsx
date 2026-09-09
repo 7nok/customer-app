@@ -1,32 +1,48 @@
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
+import { HeroImage } from '@/components/hero-image';
 import { PrimaryButton, Screen } from '@/components/ui';
+import { HERO_CREDIT } from '@/constants/media';
 import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
-import { formatDate, formatTime, summarizeHours, vehicleLabel } from '@/lib/format';
+import {
+  appointmentStatusLabel,
+  formatDate,
+  formatTime,
+  openAppointmentWindows,
+  vehicleLabel,
+} from '@/lib/format';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { height } = useWindowDimensions();
   const { profile, upcomingAppointments, weeklySlots } = useAppState();
   const nextAppointment = upcomingAppointments[0];
-  const openDays = summarizeHours(weeklySlots).filter((row) => row.hours !== 'Closed');
+  const windows = openAppointmentWindows(weeklySlots);
+  const heroHeight = Math.max(360, Math.round(Math.min(height * 0.66, 620)));
 
   return (
     <Screen padded={false}>
-      <View style={styles.stage}>
-        <Text style={styles.kicker}>{shop.locationLabel}</Text>
-        <Text style={styles.wordmark}>{shop.name}</Text>
-        <Text style={styles.tagline}>{shop.tagline}</Text>
-
-        <View style={styles.cta}>
-          <PrimaryButton title="Book a visit" onPress={() => router.push('/book')} />
+      <View style={[styles.hero, { height: heroHeight }]}>
+        <HeroImage style={StyleSheet.absoluteFillObject} contentPosition={{ top: '35%', left: '50%' }} />
+        <View style={styles.heroDim} />
+        <View style={styles.heroFade} />
+        <View style={styles.heroCopy}>
+          <Text style={styles.kicker}>{shop.serviceAreaShort}</Text>
+          <Text style={styles.wordmark}>{shop.name}</Text>
+          <Text style={styles.tagline}>{shop.tagline}</Text>
+          <View style={styles.cta}>
+            <PrimaryButton title="Book a visit" onPress={() => router.push('/book')} />
+          </View>
         </View>
+      </View>
 
+      <View style={styles.stage}>
         {nextAppointment ? (
           <Pressable onPress={() => router.push('/book')} style={styles.nextLine}>
-            <Text style={styles.nextKicker}>Next</Text>
+            <Text style={styles.nextKicker}>{appointmentStatusLabel(nextAppointment.status)}</Text>
             <Text style={styles.nextCopy}>
               {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
               {'  '}
@@ -40,17 +56,28 @@ export default function HomeScreen() {
           <LaunchRow index="02" title="Guide" onPress={() => router.push('/maintenance')} />
           <LaunchRow
             index="03"
-            title={profile ? profile.name.split(' ')[0] : 'List'}
+            title={profile ? profile.name.split(' ')[0] : 'Rewards'}
             onPress={() => router.push('/loyalty')}
           />
           <LaunchRow index="04" title="Shop" onPress={() => router.push('/about')} />
         </View>
 
+        <Text style={styles.hoursKicker}>{shop.hoursHeadline}</Text>
         <Text style={styles.hours}>
-          {openDays.length
-            ? openDays.map((row) => `${row.day} ${row.hours}`).join('  ·  ')
-            : 'Hours on the shop page'}
+          {windows.length
+            ? windows.map((row) => `${row.day} ${row.hours}`).join('  ·  ')
+            : 'Joe has not posted windows yet — text to ask.'}
         </Text>
+        <Text style={styles.hoursNote}>{shop.hoursBody}</Text>
+
+        <Pressable
+          onPress={() => {
+            void Linking.openURL(shop.smsUrl);
+          }}
+          style={({ pressed }) => [styles.textJoe, pressed && { opacity: 0.55 }]}>
+          <Text style={styles.textJoeLabel}>Text Joe  {shop.phoneDisplay}</Text>
+        </Pressable>
+        <Text style={styles.credit}>{HERO_CREDIT}</Text>
       </View>
     </Screen>
   );
@@ -74,13 +101,30 @@ function LaunchRow({
 }
 
 const styles = StyleSheet.create({
-  stage: {
-    flexGrow: 1,
+  hero: {
     justifyContent: 'flex-end',
+    overflow: 'hidden',
+    width: '100%',
+  },
+  heroDim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.28)',
+  },
+  heroFade: {
+    backgroundColor: colors.bg,
+    bottom: 0,
+    height: '46%',
+    left: 0,
+    opacity: 0.92,
+    position: 'absolute',
+    right: 0,
+  },
+  heroCopy: {
+    gap: 10,
+    paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
-    gap: spacing.md,
+    zIndex: 1,
   },
   kicker: {
     color: colors.muted,
@@ -91,10 +135,10 @@ const styles = StyleSheet.create({
   },
   wordmark: {
     color: colors.white,
-    fontSize: 64,
+    fontSize: 56,
     fontWeight: '500',
-    letterSpacing: -2.4,
-    lineHeight: 68,
+    letterSpacing: -2.2,
+    lineHeight: 58,
   },
   tagline: {
     color: colors.muted,
@@ -105,6 +149,12 @@ const styles = StyleSheet.create({
   cta: {
     marginTop: spacing.sm,
     maxWidth: 420,
+  },
+  stage: {
+    gap: spacing.md,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   nextLine: {
     gap: 4,
@@ -147,11 +197,39 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: -0.4,
   },
+  hoursKicker: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: '500',
+    letterSpacing: 1.6,
+    marginTop: spacing.sm,
+    textTransform: 'uppercase',
+  },
   hours: {
     color: colors.muted,
     fontSize: 12,
     letterSpacing: 0.2,
     lineHeight: 18,
+  },
+  hoursNote: {
+    color: colors.muted,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  textJoe: {
     marginTop: spacing.sm,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  textJoeLabel: {
+    color: colors.white,
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+  },
+  credit: {
+    color: colors.muted,
+    fontSize: 11,
+    marginTop: spacing.xs,
   },
 });

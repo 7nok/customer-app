@@ -19,6 +19,8 @@ export type Profile = {
   signedUpAt: string;
 };
 
+export type AppointmentStatus = 'pending';
+
 export type Appointment = {
   id: string;
   createdAt: string;
@@ -30,6 +32,8 @@ export type Appointment = {
   model: string;
   notes: string;
   customerName?: string;
+  /** Requests wait for Joe — not an instant lock. */
+  status: AppointmentStatus;
 };
 
 export type BookableSlot = {

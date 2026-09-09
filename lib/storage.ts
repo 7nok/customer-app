@@ -35,7 +35,9 @@ export async function saveProfile(profile: Profile | null): Promise<void> {
 
 export async function loadAppointments(): Promise<Appointment[]> {
   const items = await readJson<Appointment[]>(KEYS.appointments, []);
-  return items.sort((a, b) => `${a.date}${a.start}`.localeCompare(`${b.date}${b.start}`));
+  return items
+    .map((item) => ({ ...item, status: item.status ?? 'pending' }))
+    .sort((a, b) => `${a.date}${a.start}`.localeCompare(`${b.date}${b.start}`));
 }
 
 export async function saveAppointments(appointments: Appointment[]): Promise<void> {

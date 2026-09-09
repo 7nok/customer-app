@@ -12,12 +12,12 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: 'Not found' }} />
       <Screen>
         <PageIntro
-          eyebrow="Joe’s"
+          eyebrow="Daily Drivin"
           title="That page is not on the lot"
-          body="The link may be old, or the address was typed a little off. Head back to the shop home and try again."
+          body="The link may be old, or the address was typed a little off. Head back to home and try again."
         />
         <PrimaryButton title="Back to home" onPress={() => router.replace('/')} />
-        <Text style={styles.hint}>Joe’s · Hillsboro, Texas</Text>
+        <Text style={styles.hint}>Daily Drivin · Hillsboro, Texas</Text>
       </Screen>
     </>
   );

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen } from '@/components/ui';
 import { GUIDE_DISCLAIMER } from '@/constants/maintenance';
+import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 
 export default function MaintenanceHomeScreen() {
@@ -14,8 +15,9 @@ export default function MaintenanceHomeScreen() {
       <Text style={styles.title}>What next.</Text>
       <Text style={styles.body}>
         Pick the vehicle, then a system. Intervals are general — Joe still wants to look at the one
-        in your driveway.
+        in your driveway. Fluids, suspension, engine, and a quality check-over are everyday work.
       </Text>
+      <Text style={styles.body}>{shop.exclusionsNote}</Text>
 
       <View style={styles.list}>
         <Choice

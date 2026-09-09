@@ -28,11 +28,13 @@ export const WEEKDAYS: { value: Weekday; label: string; short: string }[] = [
 const weekdayHours = (weekday: Weekday, hours: readonly string[]): WeeklySlot[] =>
   hours.map((start) => ({ weekday, start }));
 
-/** Starter week: Tue–Fri 8–5 with lunch at noon, Saturday morning. Joe can edit this in-app. */
+/**
+ * Starter appointment windows — irregular on purpose. These are not store hours.
+ * Joe edits them in the app.
+ */
 export const DEFAULT_WEEKLY_SLOTS: WeeklySlot[] = [
-  ...weekdayHours(2, ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00']),
-  ...weekdayHours(3, ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00']),
-  ...weekdayHours(4, ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00']),
-  ...weekdayHours(5, ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00']),
-  ...weekdayHours(6, ['08:00', '09:00', '10:00', '11:00']),
+  ...weekdayHours(2, ['09:00', '10:00', '13:00', '14:00']),
+  ...weekdayHours(4, ['08:00', '09:00', '10:00', '11:00', '15:00']),
+  ...weekdayHours(5, ['09:00', '10:00', '11:00', '13:00']),
+  ...weekdayHours(6, ['08:00', '09:00', '10:00']),
 ];

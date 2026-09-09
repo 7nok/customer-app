@@ -22,9 +22,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta
           name="description"
-          content="Joe’s mechanic shop in Hillsboro, Texas — book a visit, check maintenance intervals, and join the shop list."
+          content="Daily Drivin — mobile auto care around Hillsboro, Texas. Request a visit, check maintenance intervals, and join the rewards list."
         />
-        <title>Joe’s · Hillsboro, TX</title>
+        <title>Daily Drivin · Hillsboro, TX</title>
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: responsiveCss }} />
         <script dangerouslySetInnerHTML={{ __html: visualViewportLockScript }} />

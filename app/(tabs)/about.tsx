@@ -5,24 +5,23 @@ import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
 import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
-import { summarizeHours } from '@/lib/format';
+import { openAppointmentWindows } from '@/lib/format';
 
 export default function AboutScreen() {
   const router = useRouter();
   const { weeklySlots } = useAppState();
-  const hours = summarizeHours(weeklySlots);
+  const windows = openAppointmentWindows(weeklySlots);
 
   return (
     <Screen>
       <Text style={styles.kicker}>Shop</Text>
       <Text style={styles.title}>{shop.name}</Text>
       <Text style={styles.lede}>{shop.tagline}</Text>
+      <Text style={styles.lede}>{shop.lede}</Text>
 
       <View style={styles.block}>
-        {shop.placeholderBio.map((paragraph) => (
-          <Text
-            key={paragraph}
-            style={[styles.bio, paragraph.startsWith('[PLACEHOLDER') && styles.placeholder]}>
+        {shop.bio.map((paragraph) => (
+          <Text key={paragraph} style={styles.bio}>
             {paragraph}
           </Text>
         ))}
@@ -35,38 +34,45 @@ export default function AboutScreen() {
           {String(index + 1).padStart(2, '0')}  {item}
         </Text>
       ))}
+      <Text style={styles.muted}>{shop.exclusionsNote}</Text>
+      <Text style={styles.line}>Pay with {shop.payment.toLowerCase()}.</Text>
 
       <View style={styles.rule} />
-      <Text style={styles.kicker}>Hours</Text>
-      {hours.map((row) => (
-        <View key={row.day} style={styles.hoursRow}>
-          <Text style={styles.hoursDay}>{row.day}</Text>
-          <Text style={styles.hoursTime}>{row.hours}</Text>
-        </View>
-      ))}
+      <Text style={styles.kicker}>{shop.hoursHeadline}</Text>
+      <Text style={styles.muted}>{shop.hoursBody}</Text>
+      {windows.length ? (
+        windows.map((row) => (
+          <View key={row.day} style={styles.hoursRow}>
+            <Text style={styles.hoursDay}>{row.day}</Text>
+            <Text style={styles.hoursTime}>{row.hours}</Text>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.line}>No windows posted right now.</Text>
+      )}
 
       <View style={styles.rule} />
       <Text style={styles.kicker}>Contact</Text>
-      <Text style={styles.line}>{shop.locationLabel}</Text>
-      <Text style={styles.muted}>{shop.phone}</Text>
-      <Text style={styles.muted}>{shop.phoneNote}</Text>
+      <Text style={styles.line}>{shop.serviceArea}</Text>
+      <Text style={styles.line}>{shop.phoneDisplay}</Text>
+      <Text style={styles.muted}>{shop.noEmergencyNote}</Text>
+      <Text style={styles.muted}>{shop.emailNote}</Text>
+      <Text style={styles.muted}>{shop.instagramNote}</Text>
 
       <View style={{ gap: spacing.sm, marginTop: spacing.md }}>
         <PrimaryButton
-          title="Call the placeholder line"
+          title={`Text Joe  ${shop.phoneDisplay}`}
           onPress={() => {
-            void Linking.openURL(`tel:${shop.phoneTel}`);
+            void Linking.openURL(shop.smsUrl);
           }}
         />
         <SecondaryButton
-          title="Open Hillsboro, TX in maps"
+          title="Call Joe"
           onPress={() => {
-            void Linking.openURL(
-              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery)}`,
-            );
+            void Linking.openURL(shop.telUrl);
           }}
         />
-        <SecondaryButton title="Joe: set available times" onPress={() => router.push('/availability')} />
+        <SecondaryButton title="Joe: set appointment windows" onPress={() => router.push('/availability')} />
       </View>
     </Screen>
   );
@@ -101,10 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
   },
-  placeholder: {
-    color: colors.warn,
-    fontWeight: '600',
-  },
   rule: {
     backgroundColor: colors.line,
     height: 1,
@@ -119,6 +121,7 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 14,
     lineHeight: 20,
+    marginTop: 6,
   },
   hoursRow: {
     flexDirection: 'row',

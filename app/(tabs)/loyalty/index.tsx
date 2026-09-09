@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
+import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { vehicleLabel } from '@/lib/format';
@@ -13,13 +14,10 @@ export default function LoyaltyScreen() {
   if (!profile) {
     return (
       <Screen>
-        <Text style={styles.kicker}>List</Text>
+        <Text style={styles.kicker}>Rewards</Text>
         <Text style={styles.title}>Join.</Text>
-        <Text style={styles.body}>
-          Name, email, and vehicles on this device. No points, no fake discounts — just a local
-          account so the shop has your info.
-        </Text>
-        <Text style={styles.note}>This first version saves only on your device.</Text>
+        <Text style={styles.body}>{shop.rewardsNote}</Text>
+        <Text style={styles.note}>Name, vehicles, and your email — saved on this device only.</Text>
         <PrimaryButton title="Sign up" onPress={() => router.push('/loyalty/signup')} />
       </Screen>
     );
@@ -33,9 +31,10 @@ export default function LoyaltyScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>List</Text>
+      <Text style={styles.kicker}>Rewards</Text>
       <Text style={styles.title}>{profile.name.split(' ')[0]}.</Text>
-      <Text style={styles.body}>On Joe’s local list. Update vehicles anytime.</Text>
+      <Text style={styles.body}>On the Daily Drivin list. Update vehicles anytime.</Text>
+      <Text style={styles.note}>{shop.rewardsNote}</Text>
 
       <View style={styles.rule} />
       <Text style={styles.meta}>{profile.name}</Text>

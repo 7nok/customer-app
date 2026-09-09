@@ -1,7 +1,8 @@
 import type { Appointment, BookableSlot, WeeklySlot } from '@/lib/types';
 import { addHour, toIsoDate } from '@/lib/format';
 
-const LOOKAHEAD_DAYS = 14;
+/** Customers can request a window about two months out. */
+export const BOOKING_LOOKAHEAD_DAYS = 60;
 
 function isPastToday(start: string): boolean {
   const now = new Date();
@@ -14,7 +15,7 @@ function isPastToday(start: string): boolean {
 export function getBookableSlots(
   weeklySlots: WeeklySlot[],
   appointments: Appointment[],
-  days = LOOKAHEAD_DAYS,
+  days = BOOKING_LOOKAHEAD_DAYS,
 ): BookableSlot[] {
   const booked = new Set(appointments.map((item) => `${item.date}|${item.start}`));
   const results: BookableSlot[] = [];

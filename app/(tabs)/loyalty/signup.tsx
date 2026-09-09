@@ -11,6 +11,7 @@ import {
   Screen,
   SecondaryButton,
 } from '@/components/ui';
+import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { isValidEmail, isValidYear, newId } from '@/lib/format';
@@ -87,9 +88,9 @@ export default function LoyaltySignupScreen() {
         />
       }>
         <PageIntro
-          eyebrow={isEdit ? 'Update account' : 'Loyalty signup'}
-          title={isEdit ? 'Keep your info current' : 'Tell Joe who you are'}
-          body="Name, email, and the vehicles you bring in. Nothing leaves this device in v1."
+          eyebrow={isEdit ? 'Update rewards account' : 'Rewards signup'}
+          title={isEdit ? 'Keep your info current' : 'Join the list'}
+          body={`${shop.rewardsNote} Name, email, and the vehicles you bring in. Nothing leaves this device in v1.`}
         />
 
         <Field label="Your name" value={name} onChangeText={setName} placeholder="Jordan Hale" autoCapitalize="words" />

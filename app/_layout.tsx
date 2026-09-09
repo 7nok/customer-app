@@ -40,10 +40,10 @@ function RootNavigation() {
   return (
     <>
       <Head>
-        <title>Joe’s · Hillsboro, TX</title>
+        <title>Daily Drivin · Hillsboro, TX</title>
         <meta
           name="description"
-          content="Customer site and app for Joe’s mechanic shop in Hillsboro, Texas. Book a visit, check maintenance intervals, and join the shop list."
+          content="Daily Drivin — Joe’s mobile auto care around Hillsboro, Texas and about thirty miles out. Request a visit, check maintenance intervals, and join the rewards list."
         />
       </Head>
       <Stack
@@ -57,7 +57,7 @@ function RootNavigation() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="availability"
-          options={{ title: 'Shop hours', presentation: 'card' }}
+          options={{ title: 'Appointment windows', presentation: 'card' }}
         />
       </Stack>
       <StatusBar style="light" />

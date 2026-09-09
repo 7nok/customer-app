@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Joe's",
+    "name": "Daily Drivin",
     "slug": "joes-hillsboro",
-    "description": "Customer mechanic shop app for Expo Go and static web.",
+    "description": "Customer mobile mechanic app for Expo Go and static web.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

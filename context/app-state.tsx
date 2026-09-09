@@ -120,6 +120,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           model: draft.model.trim(),
           notes: draft.notes.trim(),
           customerName: draft.customerName?.trim() || profile?.name,
+          status: 'pending',
         };
         const next = [...appointments, appointment].sort((a, b) =>
           `${a.date}${a.start}`.localeCompare(`${b.date}${b.start}`),
