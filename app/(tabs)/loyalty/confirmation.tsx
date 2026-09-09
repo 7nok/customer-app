@@ -24,7 +24,7 @@ export default function LoyaltyConfirmationScreen() {
       <PageIntro
         eyebrow="You’re on the list"
         title={`Thanks, ${profile.name.split(' ')[0]}`}
-        body="Your loyalty account is saved on this device. Joe can read it when you show him the app."
+        body="Your rewards signup is saved on this device. Joe can read it when you show him the app. Discount details come later — nothing is invented here."
       />
 
       <Card>

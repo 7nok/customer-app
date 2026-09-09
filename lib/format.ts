@@ -87,6 +87,15 @@ export function vehicleLabel(year: string, make: string, model: string): string 
   return `${year} ${make} ${model}`.trim();
 }
 
+export function appointmentStatusLabel(_status?: string): string {
+  return 'Pending Joe’s confirmation';
+}
+
+/** Days Joe has posted, for customer-facing copy — not a store-hours grid. */
+export function openAppointmentWindows(slots: WeeklySlot[]): { day: string; hours: string }[] {
+  return summarizeHours(slots).filter((row) => row.hours !== 'Closed');
+}
+
 export function summarizeHours(slots: WeeklySlot[]): { day: string; hours: string }[] {
   return WEEKDAYS.map(({ value, label }) => {
     const starts = slots

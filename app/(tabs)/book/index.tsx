@@ -13,9 +13,17 @@ import {
   Screen,
   SecondaryButton,
 } from '@/components/ui';
+import { shop } from '@/constants/shop';
 import { colors, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
-import { bookingGaps, formatDate, formatTime, vehicleLabel } from '@/lib/format';
+import {
+  appointmentStatusLabel,
+  bookingGaps,
+  formatDate,
+  formatTime,
+  vehicleLabel,
+} from '@/lib/format';
+import { BOOKING_LOOKAHEAD_DAYS } from '@/lib/slots';
 import type { BookableSlot, Vehicle } from '@/lib/types';
 
 export default function BookScreen() {
@@ -94,8 +102,8 @@ export default function BookScreen() {
         <PrimaryButton
           title={
             selectedSlot
-              ? `Book ${formatDate(selectedSlot.date)} at ${formatTime(selectedSlot.start)}`
-              : 'Book appointment'
+              ? `Request ${formatDate(selectedSlot.date)} at ${formatTime(selectedSlot.start)}`
+              : 'Request appointment'
           }
           onPress={() => {
             void onBook();
@@ -105,8 +113,8 @@ export default function BookScreen() {
       }>
         <PageIntro
           eyebrow="Appointments"
-          title="Book a time with Joe"
-          body="Choose an open slot, tell us about the vehicle, and describe what is going on. This stays on this device for now — no payments or texts yet."
+          title="Request a time with Joe"
+          body={`${shop.bookingPendingNote} ${shop.bookingWindowNote} ${shop.checkoverNote} Year, make, model, and a short note stay on this device.`}
         />
 
         {upcomingAppointments.length > 0 ? (
@@ -118,6 +126,7 @@ export default function BookScreen() {
                   <Text style={styles.visitWhen}>
                     {formatDate(item.date)} · {formatTime(item.start)}–{formatTime(item.end)}
                   </Text>
+                  <Text style={styles.muted}>{appointmentStatusLabel(item.status)}</Text>
                   <Text style={styles.muted}>
                     {vehicleLabel(item.year, item.make, item.model)}
                   </Text>
@@ -198,16 +207,17 @@ export default function BookScreen() {
         <Card>
           <Text style={styles.sectionTitle}>Open times</Text>
           <Text style={styles.muted}>
-            Times follow Joe’s weekly availability and hide slots already booked on this device.
-            Shop is in Hillsboro, TX (Central Time).
+            These are Joe’s posted windows for about the next {Math.round(BOOKING_LOOKAHEAD_DAYS / 30)}{' '}
+            months (Central Time). Same-day can appear when a window is still open today. Requests stay
+            pending until Joe confirms. Daily Drivin comes to you in {shop.serviceArea}.
           </Text>
           {bookableSlots.length === 0 ? (
             <EmptyState
               title="No open slots right now"
-              body="Joe may be fully booked on this device, or weekly hours need an update."
+              body="Joe may have no open windows on this device, or the weekly board needs an update."
               action={
                 <SecondaryButton
-                  title="Review shop hours"
+                  title="Review appointment windows"
                   onPress={() => router.push('/availability')}
                 />
               }
@@ -265,7 +275,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   dayLabel: {
-    color: colors.navy,
+    color: colors.text,
     fontSize: 15,
     fontWeight: '800',
     marginTop: 4,

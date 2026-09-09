@@ -24,7 +24,7 @@ export default function AvailabilityScreen() {
 
   const copyWeekdays = () => {
     const tuesday = weeklySlots.filter((slot) => slot.weekday === 2).map((slot) => slot.start);
-    const starts = tuesday.length ? tuesday : ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+    const starts = tuesday.length ? tuesday : ['09:00', '10:00', '13:00', '14:00'];
     const without = weeklySlots.filter((slot) => slot.weekday < 2 || slot.weekday > 5);
     const copied: WeeklySlot[] = [2, 3, 4, 5].flatMap((weekday) =>
       starts.map((start) => ({ weekday: weekday as Weekday, start })),
@@ -36,12 +36,12 @@ export default function AvailabilityScreen() {
     <Screen>
       <PageIntro
         eyebrow="Shop owner"
-        title="Joe’s available times"
-        body="Tap hours to open or close them. Customers only see these weekly slots for the next two weeks, minus anything already booked on this device."
+        title="Joe’s appointment windows"
+        body="Tap times to offer or hide them. Customers request a slot up to about two months out. These are not store hours — Daily Drivin is by appointment, and windows can stay irregular."
       />
 
       <Banner tone="warn">
-        Light admin for v1. Anyone with the app can change this schedule. A locked owner login can
+        Light admin for v1. Anyone with the app can change this board. A locked owner login can
         come later.
       </Banner>
 
@@ -54,7 +54,9 @@ export default function AvailabilityScreen() {
             <View style={styles.dayHeader}>
               <Text style={styles.dayTitle}>{day.label}</Text>
               <Text style={styles.count}>
-                {selected.size === 0 ? 'Closed' : `${selected.size} hour${selected.size === 1 ? '' : 's'}`}
+                {selected.size === 0
+                  ? 'No windows'
+                  : `${selected.size} window${selected.size === 1 ? '' : 's'}`}
               </Text>
             </View>
             <View style={styles.chipRow}>
@@ -68,14 +70,14 @@ export default function AvailabilityScreen() {
               ))}
             </View>
             {selected.size > 0 ? (
-              <SecondaryButton title={`Close ${day.label}`} onPress={() => clearDay(day.value)} />
+              <SecondaryButton title={`Clear ${day.label}`} onPress={() => clearDay(day.value)} />
             ) : null}
           </Card>
         );
       })}
 
-      <SecondaryButton title="Copy Tuesday hours to Tue–Fri" onPress={copyWeekdays} />
-      <SecondaryButton title="Restore starter hours" onPress={() => void restoreDefaultHours()} />
+      <SecondaryButton title="Copy Tuesday windows to Tue–Fri" onPress={copyWeekdays} />
+      <SecondaryButton title="Restore starter windows" onPress={() => void restoreDefaultHours()} />
     </Screen>
   );
 }

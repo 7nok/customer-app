@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 
 import { AppStateProvider, useAppState } from '@/context/app-state';
-import { colors } from '@/constants/theme';
+import { colors, type } from '@/constants/theme';
 import { useLockToVisualViewport } from '@/hooks/use-lock-to-visual-viewport';
 
 export const unstable_settings = {
@@ -40,24 +40,24 @@ function RootNavigation() {
   return (
     <>
       <Head>
-        <title>Joe’s · Hillsboro, TX</title>
+        <title>Daily Drivin · Hillsboro, TX</title>
         <meta
           name="description"
-          content="Customer site and app for Joe’s mechanic shop in Hillsboro, Texas. Book a visit, check maintenance intervals, and join the shop list."
+          content="Daily Drivin — Joe’s mobile auto care around Hillsboro, Texas and about thirty miles out. Request a visit, check maintenance intervals, and join the rewards list."
         />
       </Head>
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.navy },
           headerTintColor: colors.cream,
-          headerTitleStyle: { fontWeight: '700' },
+          headerTitleStyle: type.header,
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.bg },
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="availability"
-          options={{ title: 'Shop hours', presentation: 'card' }}
+          options={{ title: 'Appointment windows', presentation: 'card' }}
         />
       </Stack>
       <StatusBar style="light" />

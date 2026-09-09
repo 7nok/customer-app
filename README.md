@@ -1,6 +1,6 @@
 # Customer shop app
 
-Customer-facing mechanic shop app and website: book a visit, look up general maintenance intervals, join a local loyalty list, and read about the shop.
+Customer-facing mobile mechanic app and website: request a visit, look up general maintenance intervals, join a local rewards list, and read about the shop.
 
 This is one [Expo](https://expo.dev) + [Expo Router](https://docs.expo.dev/router/introduction/) + TypeScript product. The same screens run in **Expo Go** on iPhone and Android, and as a **static website** for GitHub Pages. There is no backend, payments, or SMS in v1 — appointments, the loyalty account, and weekly hours are stored on the device (or in the browser) with AsyncStorage.
 
@@ -10,12 +10,12 @@ Shop name, location, and contact copy that customers see live in the running app
 
 | Area | What it does |
 | --- | --- |
-| **Home** | Shop intro and shortcuts to Book, Maintenance, Loyalty, and About. Shows the next booked visit when one exists. |
-| **Book** | Collects vehicle year / make / model and a concern note. Customers pick from the shop’s open weekly slots. Confirmation stays on this device. |
-| **Shop hours** | Light owner tools to turn hourly slots on or off for each weekday. Customers only see those times for the next two weeks. |
+| **Home** | Hero intro and shortcuts to Book, Maintenance, Rewards, and About. Shows the next requested visit when one exists. |
+| **Book** | Collects vehicle year / make / model and a concern note. Customers pick from posted weekly windows (about two months out). Status is pending confirmation. Saved on this device. |
+| **Appointment windows** | Light owner tools to turn hourly slots on or off for each weekday. These are appointment windows, not a fixed store-hours grid. |
 | **Maintenance** | Guide flow: Maintenance → Car or Truck → category (fluids, brakes, engine, …) → item (e.g. brake fluid) → typical interval. Labeled as general recommendations. |
-| **Loyalty** | Sign up with name, email, and vehicles. Confirmation after save. Account can be updated or removed on this device. |
-| **About** | Shop story (placeholder copy in the app, clearly marked), location, weekly hours, and a labeled placeholder phone number. |
+| **Rewards** | Sign up with name, email, and vehicles for discounts/rewards (details TBD). Account can be updated or removed on this device. |
+| **About** | Shop story, service area (no street address), appointment windows, text-first contact, and pay notes. |
 
 No dollar prices or customer reviews are shown.
 
@@ -72,27 +72,28 @@ Live site: [https://7nok.github.io/customer-app/](https://7nok.github.io/custome
 The site is a static Expo export (`npx expo export --platform web`), not the README. `experiments.baseUrl` in `app.json` is `/customer-app` so assets resolve on project Pages. Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
 
 - Every pull request **exports** the website (and typechecks) so the build stays green.
-- Pushes to `main` (or a manual **Actions → GitHub Pages → Run workflow**) **deploy** the `dist` folder with the official `github-pages` action.
+- Pushes to branch `A` (or a manual **Actions → GitHub Pages → Run workflow** on `A`) **deploy** the `dist` folder with the official `github-pages` action. Design experiments live on `A`, `B`, and `C`. `main` is left unchanged.
 
 ### Pages source
 
 Repo **Settings → Pages** must use **GitHub Actions** (not “Deploy from a branch”). A branch source publishes a Jekyll build of the README instead of the Expo export.
 
 1. Confirm **Source** is **GitHub Actions**.
-2. Push to `main` or run the **GitHub Pages** workflow.
+2. Push to `A` or run the **GitHub Pages** workflow from that branch.
 3. The first successful Actions deploy publishes the Expo site at the URL above.
 
 A `.nojekyll` file is written into `dist/` so GitHub does not ignore Expo’s `_expo` folders.
 
 ## Placeholders in the running app
 
-- The About bio is marked as placeholder copy so it can be replaced later.
-- The shop phone in the app is a labeled placeholder, not a real line.
-- Shop hours start as a sensible weekday / Saturday-morning week and can be edited from About or Home.
+- Home uses a royalty-friendly stock car photo until shop photography is ready. Swap `assets/images/hero-car.jpg` via the single path in `constants/media.ts`.
+- Hero credit (Unsplash License): Why Kei — [unsplash.com/photos/8e2gal_GIE8](https://unsplash.com/photos/8e2gal_GIE8).
+- Email and Instagram are marked as coming soon. No street address is published.
+- Appointment windows start as an irregular starter week and can be edited in-app.
 
 ## What this version does not do
 
 - No server, so the shop does not get a push, SMS, or email when someone books.
 - No payments or estimates.
-- The hours editor is not locked behind a password.
+- The appointment-window editor is not locked behind a password.
 - Website data lives in that browser’s storage, separate from Expo Go on a phone.

@@ -1,10 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { StyleSheet, Text } from 'react-native';
+import { Linking, StyleSheet, Text } from 'react-native';
 
 import { Banner, Card, PageIntro, PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
+import { shop } from '@/constants/shop';
 import { colors } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
-import { formatDateLong, formatTime, vehicleLabel } from '@/lib/format';
+import { appointmentStatusLabel, formatDateLong, formatTime, vehicleLabel } from '@/lib/format';
 
 export default function BookingConfirmationScreen() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function BookingConfirmationScreen() {
   if (!appointment) {
     return (
       <Screen>
-        <PageIntro title="We could not find that booking" />
+        <PageIntro title="We could not find that request" />
         <PrimaryButton title="Back to booking" onPress={() => router.replace('/book')} />
       </Screen>
     );
@@ -24,9 +25,9 @@ export default function BookingConfirmationScreen() {
   return (
     <Screen>
       <PageIntro
-        eyebrow="Confirmed on this device"
-        title="You’re on the calendar"
-        body="Joe does not get a text or email from this first version. Bring the details with you, or show him this screen."
+        eyebrow={appointmentStatusLabel(appointment.status)}
+        title="Request sent"
+        body={`${shop.bookingPendingNote} Joe does not get a text or email from this first version — text him if you want a faster yes.`}
       />
 
       <Card>
@@ -42,15 +43,23 @@ export default function BookingConfirmationScreen() {
         </Text>
         <Text style={styles.label}>Concern</Text>
         <Text style={styles.value}>{appointment.notes}</Text>
+        <Text style={styles.label}>Status</Text>
+        <Text style={styles.value}>{appointmentStatusLabel(appointment.status)}</Text>
       </Card>
 
       <Banner>
-        Appointments are saved on this device only. If you delete the app, the booking list goes
+        Appointments are saved on this device only. If you delete the app, the request list goes
         with it.
       </Banner>
 
+      <PrimaryButton
+        title={`Text Joe  ${shop.phoneDisplay}`}
+        onPress={() => {
+          void Linking.openURL(shop.smsUrl);
+        }}
+      />
       <PrimaryButton title="Back to home" onPress={() => router.replace('/')} />
-      <SecondaryButton title="Book another visit" onPress={() => router.replace('/book')} />
+      <SecondaryButton title="Request another visit" onPress={() => router.replace('/book')} />
     </Screen>
   );
 }
