@@ -81,7 +81,7 @@ function emptyDir(dir) {
 function copyWorktree(dest) {
   emptyDir(dest);
   // Cannot fs.cpSync(ROOT → ROOT/.preview-work/…) — Node rejects copy-into-self.
-  const excludes = SKIP_COPY.flatMap((name) => ['--exclude', name]);
+  const excludes = [...SKIP_COPY].flatMap((name) => ['--exclude', name]);
   execFileSync('rsync', ['-a', '--delete', ...excludes, `${ROOT}/`, `${dest}/`]);
 }
 
