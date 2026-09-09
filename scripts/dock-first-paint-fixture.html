@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>dock-pending</title>
+    <style>
+      html, body { height: 100%; margin: 0; background: #111; }
+      #root {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0;
+        right: 0;
+        display: flex !important;
+        flex-direction: column !important;
+        height: auto !important;
+        background: #000;
+      }
+      #root > * {
+        flex: 1 1 0% !important;
+        min-height: 0 !important;
+      }
+      #app-tab-bar {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        z-index: 20;
+        height: 52px;
+        background: #1a1a1a;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+      /* Reproduce RN Web first-load: app column is visualViewport-short. */
+      .rn-window {
+        height: 650px;
+        background: #0a0a0a;
+        color: #fff;
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="rn-window">
+        <p>01 Service</p>
+        <p>02 Guide</p>
+        <p>03 Rewards</p>
+        <div id="app-tab-bar">dock</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var dock = document.getElementById('app-tab-bar');
+        var root = document.getElementById('root');
+        var box = dock.getBoundingClientRect();
+        var shell = root.getBoundingClientRect();
+        var inner = window.innerHeight;
+        var hanging = box.bottom <= 652;
+        var ok = !hanging && Math.abs(box.bottom - shell.bottom) <= 2 && box.height >= 40;
+        document.title = ok ? 'DOCK_OK' : 'DOCK_BAD';
+        document.documentElement.setAttribute('data-dock', ok ? 'ok' : 'bad');
+        document.documentElement.setAttribute('data-dock-bottom', String(Math.round(box.bottom)));
+        document.documentElement.setAttribute('data-inner', String(Math.round(inner)));
+        document.documentElement.setAttribute('data-shell-bottom', String(Math.round(shell.bottom)));
+      })();
+    </script>
+  </body>
+</html>

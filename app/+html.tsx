@@ -27,50 +27,72 @@ export default function Root({ children }: PropsWithChildren) {
         <title>Daily Drivin · Hillsboro, TX</title>
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: responsiveCss }} />
-        <script dangerouslySetInnerHTML={{ __html: visualViewportLockScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: visualViewportLockScript }} />
+      </body>
     </html>
   );
 }
 
 /**
  * First paint: #root stretches from the top safe area to the layout bottom
- * (no 100vh / 100svh). JS then pins the visible box.
+ * (no 100vh / 100svh). The dock is position:fixed to that same bottom so a
+ * short React Native `visualViewport` window cannot leave it hanging mid-page.
  *
- * If visualViewport is shorter than innerHeight and offsetTop is 0 (common in
- * in-app WKWebViews), leftover space is applied as a *top* inset and #root
- * stretches to bottom:0 so body navy cannot form a slab under the tabs.
- *
- * Keep in sync with `hooks/use-lock-to-visual-viewport.ts`.
+ * Script is after `#root` so the first measure can style the shell before
+ * paint. Keep in sync with `hooks/use-lock-to-visual-viewport.ts`.
  */
 const visualViewportLockScript = `(function(){
   if (window.__lockAppToVisualViewport) return;
-  function measure() {
+  function box() {
     var inner = window.innerHeight || 0;
     var vv = window.visualViewport;
     var scale = vv && vv.scale ? vv.scale : 1;
     var top = 0;
     var height = inner;
+    var pinToBottom = true;
     if (vv && scale === 1 && vv.height > 0) {
       top = vv.offsetTop || 0;
       height = vv.height;
+      var bottomGap = inner - top - height;
       if (top === 0 && inner > height + 1) {
         top = inner - height;
+        pinToBottom = true;
+      } else if (top > 0 && bottomGap <= 1) {
+        pinToBottom = false;
+      } else {
+        pinToBottom = true;
       }
     }
     if (top < 0) top = 0;
     if (inner > 0 && top + height > inner) height = Math.max(0, inner - top);
-    var t = Math.round(top) + 'px';
-    var h = Math.round(height > 0 ? height : inner) + 'px';
-    var pinToBottom = !(vv && (vv.offsetTop || 0) > 0);
+    if (height <= 0 && inner > 0) height = inner - top;
+    return { top: top, height: height, pinToBottom: pinToBottom };
+  }
+  function pinDock(dock) {
+    if (!dock) return;
+    dock.style.position = 'fixed';
+    dock.style.left = '0px';
+    dock.style.right = '0px';
+    dock.style.bottom = '0px';
+    dock.style.top = 'auto';
+    dock.style.zIndex = '20';
+    dock.style.flexGrow = '0';
+    dock.style.flexShrink = '0';
+  }
+  function measure() {
+    var next = box();
+    var t = Math.round(next.top) + 'px';
+    var h = Math.round(next.height > 0 ? next.height : (window.innerHeight || 0)) + 'px';
     document.documentElement.style.setProperty('--app-top', t);
     document.documentElement.style.setProperty('--app-height', h);
     var root = document.getElementById('root');
     if (root) {
       root.style.position = 'fixed';
       root.style.top = t;
-      if (pinToBottom) {
+      if (next.pinToBottom) {
         root.style.bottom = '0px';
         root.style.height = 'auto';
         root.style.maxHeight = 'none';
@@ -80,22 +102,27 @@ const visualViewportLockScript = `(function(){
         root.style.maxHeight = h;
       }
     }
+    pinDock(document.getElementById('app-tab-bar'));
   }
   window.__lockAppToVisualViewport = measure;
   measure();
   window.addEventListener('resize', measure);
   window.addEventListener('orientationchange', measure);
   window.addEventListener('pageshow', measure);
+  window.addEventListener('load', measure);
   document.addEventListener('visibilitychange', measure);
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', measure);
     window.visualViewport.addEventListener('scroll', measure);
   }
+  if (window.MutationObserver) {
+    new MutationObserver(measure).observe(document.body, { childList: true, subtree: true });
+  }
   var frames = 0;
   function poll() {
     measure();
     frames += 1;
-    if (frames < 60) requestAnimationFrame(poll);
+    if (frames < 180) requestAnimationFrame(poll);
   }
   requestAnimationFrame(poll);
 })();`;
@@ -120,32 +147,43 @@ const responsiveCss = `
     min-width: 320px;
   }
   #root {
-    position: fixed;
-    top: var(--app-top, 0px);
-    bottom: 0;
+    position: fixed !important;
+    top: var(--app-top, 0px) !important;
+    bottom: 0 !important;
     left: 0;
     right: 0;
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: auto !important;
+    max-height: none !important;
     min-height: 0;
     margin: 0 auto;
     overflow: hidden;
     background: #000000;
   }
   #root > * {
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    max-height: none !important;
   }
   @media (min-width: 600px) {
     #root {
       max-width: none;
     }
   }
-  /* Compact tab bar — no extra bottom padding on web. */
+  /* Pin the dock to the layout bottom on first paint — do not wait for hydration
+     or a visualViewport resize. RN Web sizes the app to visualViewport.height,
+     which is shorter than the layout viewport in Grok's in-app browser. */
   #app-tab-bar {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    z-index: 20;
     flex: 0 0 auto !important;
     flex-grow: 0 !important;
     flex-shrink: 0 !important;

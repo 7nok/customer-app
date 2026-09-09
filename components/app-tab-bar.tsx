@@ -22,10 +22,15 @@ export function AppTabBar(props: BottomTabBarProps) {
         backgroundColor: colors.bg,
         borderTopColor: colors.line,
         borderTopWidth: 1,
+        bottom: Platform.OS === 'web' ? 0 : undefined,
         flexGrow: 0,
         flexShrink: 0,
+        left: Platform.OS === 'web' ? 0 : undefined,
         overflow: 'visible',
         paddingBottom: bottomInset,
+        position: Platform.OS === 'web' ? 'fixed' : 'relative',
+        right: Platform.OS === 'web' ? 0 : undefined,
+        zIndex: 20,
       }}>
       <BottomTabBar {...props} insets={{ ...props.insets, bottom: 0 }} />
     </View>
