@@ -65,14 +65,18 @@ npm run preview:pages
 
 `preview:pages` builds `dist/` and serves it under the configured Pages base path (see `experiments.baseUrl` in `app.json`) at `http://localhost:4173` plus that path.
 
+To build the same three-design site Pages deploys, use `npm run preview:switcher` (see [PREVIEW.md](PREVIEW.md)).
+
 ## GitHub Pages
 
 Live site: [https://7nok.github.io/customer-app/](https://7nok.github.io/customer-app/).
 
-The site is a static Expo export (`npx expo export --platform web`), not the README. `experiments.baseUrl` in `app.json` is `/customer-app` so assets resolve on project Pages. Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+The site is a static Expo export (`npx expo export --platform web`), not the README. `experiments.baseUrl` in `app.json` is `/customer-app` so a single-design export resolves on project Pages.
 
-- Every pull request **exports** the website (and typechecks) so the build stays green.
-- Pushes to branch `A` (or a manual **Actions → GitHub Pages → Run workflow** on `A`) **deploy** the `dist` folder with the official `github-pages` action. Design experiments live on `A`, `B`, and `C`. `main` is left unchanged.
+The **live** Pages deploy exports **three** designs (`A`, `B`, `C`) into `/customer-app/a/`, `/b/`, and `/c/`, with a persistent on-page switcher and `?v=a|b|c`. Details: [PREVIEW.md](PREVIEW.md). Workflow: [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+
+- Every pull request **exports** all three variants (and typechecks) so the preview build stays green.
+- Pushes to branch `A` (or a manual **Actions → GitHub Pages → Run workflow**) **deploy** the assembled `dist` folder. Design sources stay on `A` / `B` / `C` (and their Daily Drivin rebuild branches). `main` is left unchanged.
 
 ### Pages source
 

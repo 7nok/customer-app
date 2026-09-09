@@ -9,10 +9,13 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "export:web": "expo export --platform web",
+    "export:preview": "node scripts/assemble-preview.mjs",
     "preview:pages": "npm run export:web && node scripts/preview-pages.mjs",
+    "preview:switcher": "npm run export:preview && node scripts/preview-pages.mjs",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test:shell": "node --experimental-strip-types --test lib/visible-shell.test.ts"
+    "test:shell": "node --experimental-strip-types --test lib/visible-shell.test.ts",
+    "test:preview": "node --test scripts/preview-routes.test.mjs scripts/inject-switcher.test.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

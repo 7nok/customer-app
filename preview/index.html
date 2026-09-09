@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Daily Drivin · design preview</title>
+    <meta
+      name="description"
+      content="Preview switcher for three Daily Drivin static website designs on GitHub Pages."
+    />
+    <link rel="stylesheet" href="/customer-app/preview-switcher.css" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: #000;
+        color: #f4f4f4;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+      .preview-fallback {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        padding: 24px;
+        text-align: center;
+      }
+      .preview-fallback a {
+        color: #f4f4f4;
+        margin: 0 8px;
+      }
+    </style>
+    <script>
+      /* Immediate redirect so the last-chosen variant loads without a splash flash. */
+      (function () {
+        var KEY = 'customer-app-variant';
+        function pick(value) {
+          return value === 'a' || value === 'b' || value === 'c' ? value : null;
+        }
+        function queryV() {
+          try {
+            return pick((new URLSearchParams(location.search).get('v') || '').toLowerCase());
+          } catch (error) {
+            return null;
+          }
+        }
+        function stored() {
+          try {
+            return pick((localStorage.getItem(KEY) || '').toLowerCase());
+          } catch (error) {
+            return null;
+          }
+        }
+        function rest(pathname) {
+          if (pathname === '/customer-app' || pathname === '/customer-app/' || pathname === '/customer-app/index.html') {
+            return '/';
+          }
+          if (pathname.indexOf('/customer-app/') === 0) {
+            var first = pathname.slice('/customer-app/'.length).split('/')[0];
+            if (first === 'a' || first === 'b' || first === 'c') {
+              return null;
+            }
+            return pathname.slice('/customer-app'.length) || '/';
+          }
+          return '/';
+        }
+        var variant = queryV() || stored() || 'a';
+        var pathRest = rest(location.pathname);
+        if (pathRest == null) {
+          return;
+        }
+        try {
+          localStorage.setItem(KEY, variant);
+        } catch (error) {}
+        var suffix = pathRest === '/' ? '/' : pathRest;
+        location.replace('/customer-app/' + variant + suffix + location.search + location.hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="preview-fallback">
+      <p>Loading the last chosen design…</p>
+      <p>
+        <a href="/customer-app/a/">Design A</a>
+        <a href="/customer-app/b/">Design B</a>
+        <a href="/customer-app/c/">Design C</a>
+      </p>
+    </div>
+    <script src="/customer-app/preview-switcher.js" defer></script>
+  </body>
+</html>

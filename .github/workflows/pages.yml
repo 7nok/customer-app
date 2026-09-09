@@ -2,14 +2,13 @@ name: GitHub Pages
 
 on:
   push:
-    branches: [A]
+    branches: [A, cursor/preview-switcher-1624]
   pull_request:
   workflow_dispatch:
 
 # actions/deploy-pages mints an OIDC token. These must be granted at
 # workflow scope and again on the deploy job — a job-level permissions
-# block replaces (does not inherit) the workflow block. B/C failed when
-# the OIDC mint timed out and surfaced as missing id-token: write.
+# block replaces (does not inherit) the workflow block.
 permissions:
   contents: read
   pages: write
@@ -23,6 +22,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch design sources
+        run: |
+          git fetch --no-tags origin A B C
+          git fetch --no-tags origin cursor/dock-first-paint-b-5301 cursor/dock-first-paint-c-5301 || true
+          git fetch --no-tags origin cursor/daily-drivin-hero-b-5301 cursor/daily-drivin-hero-c-5301 || true
+
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
@@ -32,52 +37,49 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Preview routing tests
+        run: npm run test:preview
 
-      - name: Export Expo static website
-        run: npx expo export --platform web
-
-      - name: GitHub Pages extras
-        run: |
-          touch dist/.nojekyll
-          cp dist/index.html dist/404.html
+      - name: Export A, B, and C into one site
+        run: node scripts/assemble-preview.mjs --typecheck
 
       - name: Setup Pages
-        if: github.ref == 'refs/heads/A' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: >-
+          (github.ref == 'refs/heads/A' || github.ref == 'refs/heads/cursor/preview-switcher-1624') &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload GitHub Pages artifact
-        if: github.ref == 'refs/heads/A' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: >-
+          (github.ref == 'refs/heads/A' || github.ref == 'refs/heads/cursor/preview-switcher-1624') &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    if: github.ref == 'refs/heads/A' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: >-
+      (github.ref == 'refs/heads/A' || github.ref == 'refs/heads/cursor/preview-switcher-1624') &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: export-web
     runs-on: ubuntu-latest
-    # Only the deploy job uses pages-A so PR export runs cannot cancel
-    # a pending push deploy.
     concurrency:
-      group: pages-A
+      group: pages-preview
       cancel-in-progress: false
     permissions:
       contents: read
       pages: write
       id-token: write
       actions: read
-    # The repo's github-pages environment only allows `main`. That blocks
-    # actions/deploy-pages on A even after export succeeds. Deploy without
-    # that protected environment so style A can publish without merging.
+    # The repo's github-pages environment only allows `main`. Deploy without
+    # that protected environment so the preview site can publish.
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         continue-on-error: true
         uses: actions/deploy-pages@v4
-      # OIDC minting can time out and surface as "id-token: write" missing.
       - name: Retry deploy to GitHub Pages
         id: deployment-retry
         if: steps.deployment.outcome == 'failure'
