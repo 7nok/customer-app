@@ -2,11 +2,12 @@ import { useRouter } from 'expo-router';
 import { Linking, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { HeroImage } from '@/components/hero-image';
-import { PrimaryButton, Screen } from '@/components/ui';
+import { Screen } from '@/components/ui';
 import { HERO_CREDIT } from '@/constants/media';
 import { shop } from '@/constants/shop';
-import { colors, spacing } from '@/constants/theme';
+import { colors, fonts, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
+import { useWideLayout } from '@/hooks/use-wide-layout';
 import {
   appointmentStatusLabel,
   formatDate,
@@ -17,219 +18,322 @@ import {
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { height } = useWindowDimensions();
+  const wide = useWideLayout(720);
+  const { width } = useWindowDimensions();
   const { profile, upcomingAppointments, weeklySlots } = useAppState();
   const nextAppointment = upcomingAppointments[0];
   const windows = openAppointmentWindows(weeklySlots);
-  const heroHeight = Math.max(360, Math.round(Math.min(height * 0.66, 620)));
+  const photoHeight = Math.max(200, Math.min(Math.round(width * 0.42), 320));
 
   return (
     <Screen padded={false}>
-      <View style={[styles.hero, { height: heroHeight }]}>
-        <HeroImage style={StyleSheet.absoluteFillObject} contentPosition={{ top: '35%', left: '50%' }} />
-        <View style={styles.heroDim} />
-        <View style={styles.heroFade} />
-        <View style={styles.heroCopy}>
-          <Text style={styles.kicker}>{shop.serviceAreaShort}</Text>
-          <Text style={styles.wordmark}>{shop.name}</Text>
-          <Text style={styles.tagline}>{shop.tagline}</Text>
-          <View style={styles.cta}>
-            <PrimaryButton title="Book a visit" onPress={() => router.push('/book')} />
-          </View>
-        </View>
+    <View style={styles.page}>
+      <View style={styles.mast}>
+        <Text style={styles.brand}>{shop.name}</Text>
+        <Text style={styles.place}>{shop.serviceAreaShort}</Text>
       </View>
 
-      <View style={styles.stage}>
-        {nextAppointment ? (
-          <Pressable onPress={() => router.push('/book')} style={styles.nextLine}>
-            <Text style={styles.nextKicker}>{appointmentStatusLabel(nextAppointment.status)}</Text>
-            <Text style={styles.nextCopy}>
-              {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
-              {'  '}
-              {vehicleLabel(nextAppointment.year, nextAppointment.make, nextAppointment.model)}
-            </Text>
-          </Pressable>
-        ) : null}
+      <Text style={styles.poster}>WE{'\n'}COME{'\n'}TO YOU</Text>
+      <Text style={styles.sub}>{shop.tagline}</Text>
 
-        <View style={styles.links}>
-          <LaunchRow index="01" title="Service" onPress={() => router.push('/book')} />
-          <LaunchRow index="02" title="Guide" onPress={() => router.push('/maintenance')} />
-          <LaunchRow
-            index="03"
-            title={profile ? profile.name.split(' ')[0] : 'Rewards'}
-            onPress={() => router.push('/loyalty')}
-          />
-          <LaunchRow index="04" title="Shop" onPress={() => router.push('/about')} />
-        </View>
+      <View style={[styles.photoPlate, { height: photoHeight }]}>
+        <View style={styles.photoRule} />
+        <HeroImage style={styles.photo} contentPosition={{ top: '40%', left: '70%' }} />
+      </View>
 
-        <Text style={styles.hoursKicker}>{shop.hoursHeadline}</Text>
-        <Text style={styles.hours}>
-          {windows.length
-            ? windows.map((row) => `${row.day} ${row.hours}`).join('  ·  ')
-            : 'Joe has not posted windows yet — text to ask.'}
-        </Text>
-        <Text style={styles.hoursNote}>{shop.hoursBody}</Text>
-
+      <View style={styles.ctaRow}>
+        <Pressable
+          onPress={() => router.push('/book')}
+          style={({ pressed }) => [styles.ctaFill, pressed && styles.pressed]}>
+          <Text style={styles.ctaFillLabel}>Request a visit</Text>
+        </Pressable>
         <Pressable
           onPress={() => {
             void Linking.openURL(shop.smsUrl);
           }}
-          style={({ pressed }) => [styles.textJoe, pressed && { opacity: 0.55 }]}>
-          <Text style={styles.textJoeLabel}>Text Joe  {shop.phoneDisplay}</Text>
+          style={({ pressed }) => [styles.ctaGhost, pressed && styles.pressed]}>
+          <Text style={styles.ctaGhostLabel}>Text Joe</Text>
         </Pressable>
+      </View>
+
+      {nextAppointment ? (
+        <Pressable onPress={() => router.push('/book')} style={styles.ticket}>
+          <Text style={styles.ticketKicker}>{appointmentStatusLabel(nextAppointment.status)}</Text>
+          <Text style={styles.ticketWhen}>
+            {formatDate(nextAppointment.date)} · {formatTime(nextAppointment.start)}
+          </Text>
+          <Text style={styles.ticketCar}>
+            {vehicleLabel(nextAppointment.year, nextAppointment.make, nextAppointment.model)}
+          </Text>
+        </Pressable>
+      ) : null}
+
+      <View style={[styles.grid, wide && styles.gridWide]}>
+        <Tile
+          span={wide ? 2 : 1}
+          index="01"
+          title="Request a visit"
+          detail="Pick a window. Joe confirms."
+          accent
+          onPress={() => router.push('/book')}
+        />
+        <Tile
+          index="02"
+          title="Guide"
+          detail="Cars, trucks, intervals"
+          onPress={() => router.push('/maintenance')}
+        />
+        <Tile
+          index="03"
+          title="Rewards"
+          detail={profile ? profile.name.split(' ')[0] : 'Discounts signup'}
+          onPress={() => router.push('/loyalty')}
+        />
+        <Tile
+          span={wide ? 2 : 1}
+          index="04"
+          title="The shop"
+          detail={shop.serviceArea}
+          onPress={() => router.push('/about')}
+        />
+      </View>
+
+      <View style={styles.windows}>
+        <Text style={styles.windowsKicker}>{shop.hoursHeadline}</Text>
+        <Text style={styles.windowsBody}>{shop.hoursBody}</Text>
+        <Text style={styles.windowsList}>
+          {windows.length
+            ? windows.map((row) => `${row.day} ${row.hours}`).join('  ·  ')
+            : 'No windows posted — text Joe to ask.'}
+        </Text>
         <Text style={styles.credit}>{HERO_CREDIT}</Text>
       </View>
+    </View>
     </Screen>
   );
 }
 
-function LaunchRow({
+function Tile({
   index,
   title,
+  detail,
   onPress,
+  accent,
+  span = 1,
 }: {
   index: string;
   title: string;
+  detail: string;
   onPress: () => void;
+  accent?: boolean;
+  span?: 1 | 2;
 }) {
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.row, pressed && { opacity: 0.55 }]}>
-      <Text style={styles.rowIndex}>{index}</Text>
-      <Text style={styles.rowTitle}>{title}</Text>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.tile,
+        span === 2 && styles.tileSpan,
+        accent && styles.tileAccent,
+        pressed && styles.pressed,
+      ]}>
+      <Text style={[styles.tileIndex, accent && styles.tileIndexOn]}>{index}</Text>
+      <Text style={[styles.tileTitle, accent && styles.tileTitleOn]}>{title}</Text>
+      <Text style={[styles.tileDetail, accent && styles.tileDetailOn]}>{detail}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: {
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-    width: '100%',
-  },
-  heroDim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.28)',
-  },
-  heroFade: {
+  page: {
     backgroundColor: colors.bg,
-    bottom: 0,
-    height: '46%',
-    left: 0,
-    opacity: 0.92,
-    position: 'absolute',
-    right: 0,
+    flexGrow: 1,
+    paddingBottom: 36,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
   },
-  heroCopy: {
-    gap: 10,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    zIndex: 1,
+  mast: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginBottom: spacing.md,
   },
-  kicker: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 3,
+  brand: {
+    color: colors.amber,
+    fontFamily: fonts.display,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 1.4,
     textTransform: 'uppercase',
   },
-  wordmark: {
-    color: colors.white,
-    fontSize: 56,
-    fontWeight: '500',
-    letterSpacing: -2.2,
-    lineHeight: 58,
-  },
-  tagline: {
+  place: {
     color: colors.muted,
-    fontSize: 17,
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  poster: {
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 72,
+    fontWeight: '700',
+    letterSpacing: -2.4,
+    lineHeight: 64,
+  },
+  sub: {
+    color: colors.text,
+    fontSize: 18,
     lineHeight: 26,
-    maxWidth: 320,
-  },
-  cta: {
     marginTop: spacing.sm,
-    maxWidth: 420,
+    maxWidth: 360,
   },
-  stage: {
-    gap: spacing.md,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
+  photoPlate: {
+    flexDirection: 'row',
+    marginTop: spacing.lg,
+    overflow: 'hidden',
   },
-  nextLine: {
-    gap: 4,
-    marginTop: spacing.sm,
+  photoRule: {
+    backgroundColor: colors.amber,
+    width: 10,
   },
-  nextKicker: {
-    color: colors.muted,
-    fontSize: 11,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
+  photo: {
+    flex: 1,
+    height: '100%',
   },
-  nextCopy: {
+  ctaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: spacing.lg,
+  },
+  ctaFill: {
+    backgroundColor: colors.amber,
+    borderRadius: 999,
+    minHeight: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 22,
+  },
+  ctaFillLabel: {
+    color: colors.white,
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  ctaGhost: {
+    borderColor: colors.text,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    minHeight: 48,
+    justifyContent: 'center',
+    paddingHorizontal: 22,
+  },
+  ctaGhostLabel: {
     color: colors.text,
     fontSize: 15,
+    fontWeight: '700',
   },
-  links: {
-    borderTopColor: colors.line,
-    borderTopWidth: 1,
-    marginTop: spacing.md,
+  ticket: {
+    backgroundColor: colors.card,
+    borderLeftColor: colors.amber,
+    borderLeftWidth: 6,
+    gap: 4,
+    marginTop: spacing.lg,
+    padding: spacing.md,
   },
-  row: {
-    alignItems: 'baseline',
-    borderBottomColor: colors.line,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    gap: 16,
-    minHeight: 56,
-    paddingVertical: 16,
-  },
-  rowIndex: {
-    color: colors.muted,
-    fontSize: 13,
-    fontWeight: '500',
-    letterSpacing: 1,
-    width: 28,
-  },
-  rowTitle: {
-    color: colors.white,
-    fontSize: 22,
-    fontWeight: '500',
-    letterSpacing: -0.4,
-  },
-  hoursKicker: {
-    color: colors.white,
-    fontSize: 13,
-    fontWeight: '500',
-    letterSpacing: 1.6,
-    marginTop: spacing.sm,
+  ticketKicker: {
+    color: colors.amberDeep,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
-  hours: {
+  ticketWhen: {
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  ticketCar: {
     color: colors.muted,
-    fontSize: 12,
-    letterSpacing: 0.2,
-    lineHeight: 18,
+    fontSize: 14,
   },
-  hoursNote: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
+  grid: {
+    gap: 12,
+    marginTop: spacing.xl,
   },
-  textJoe: {
-    marginTop: spacing.sm,
-    minHeight: 44,
-    justifyContent: 'center',
+  gridWide: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  textJoeLabel: {
+  tile: {
+    backgroundColor: colors.card,
+    flexGrow: 1,
+    gap: 6,
+    minWidth: '46%',
+    padding: spacing.md,
+  },
+  tileSpan: {
+    minWidth: '100%',
+  },
+  tileAccent: {
+    backgroundColor: colors.cream,
+  },
+  tileIndex: {
+    color: colors.amber,
+    fontFamily: fonts.display,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  tileIndexOn: {
+    color: colors.amber,
+  },
+  tileTitle: {
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 28,
+    fontWeight: '700',
+    letterSpacing: -0.6,
+  },
+  tileTitleOn: {
     color: colors.white,
+  },
+  tileDetail: {
+    color: colors.muted,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  tileDetailOn: {
+    color: '#D9D0C2',
+  },
+  windows: {
+    gap: 8,
+    marginTop: spacing.xl,
+  },
+  windowsKicker: {
+    color: colors.amber,
+    fontFamily: fonts.display,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  windowsBody: {
+    color: colors.text,
     fontSize: 15,
-    fontWeight: '500',
-    letterSpacing: 0.3,
+    lineHeight: 22,
+  },
+  windowsList: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 20,
   },
   credit: {
     color: colors.muted,
     fontSize: 11,
-    marginTop: spacing.xs,
+    marginTop: 8,
+  },
+  pressed: {
+    opacity: 0.72,
   },
 });

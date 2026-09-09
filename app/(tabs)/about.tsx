@@ -3,7 +3,7 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton, Screen, SecondaryButton } from '@/components/ui';
 import { shop } from '@/constants/shop';
-import { colors, spacing } from '@/constants/theme';
+import { colors, fonts, spacing } from '@/constants/theme';
 import { useAppState } from '@/context/app-state';
 import { openAppointmentWindows } from '@/lib/format';
 
@@ -14,10 +14,9 @@ export default function AboutScreen() {
 
   return (
     <Screen>
-      <Text style={styles.kicker}>Shop</Text>
+      <Text style={styles.kicker}>{shop.serviceAreaShort}</Text>
       <Text style={styles.title}>{shop.name}</Text>
       <Text style={styles.lede}>{shop.tagline}</Text>
-      <Text style={styles.lede}>{shop.lede}</Text>
 
       <View style={styles.block}>
         {shop.bio.map((paragraph) => (
@@ -27,18 +26,16 @@ export default function AboutScreen() {
         ))}
       </View>
 
-      <View style={styles.rule} />
-      <Text style={styles.kicker}>Work</Text>
-      {shop.workList.map((item, index) => (
-        <Text key={item} style={styles.line}>
-          {String(index + 1).padStart(2, '0')}  {item}
+      <Text style={styles.section}>Work</Text>
+      {shop.workList.map((item) => (
+        <Text key={item} style={styles.work}>
+          {item}
         </Text>
       ))}
       <Text style={styles.muted}>{shop.exclusionsNote}</Text>
-      <Text style={styles.line}>Pay with {shop.payment.toLowerCase()}.</Text>
+      <Text style={styles.pay}>Pay with {shop.payment.toLowerCase()}.</Text>
 
-      <View style={styles.rule} />
-      <Text style={styles.kicker}>{shop.hoursHeadline}</Text>
+      <Text style={styles.section}>{shop.hoursHeadline}</Text>
       <Text style={styles.muted}>{shop.hoursBody}</Text>
       {windows.length ? (
         windows.map((row) => (
@@ -48,13 +45,12 @@ export default function AboutScreen() {
           </View>
         ))
       ) : (
-        <Text style={styles.line}>No windows posted right now.</Text>
+        <Text style={styles.muted}>No windows posted right now.</Text>
       )}
 
-      <View style={styles.rule} />
-      <Text style={styles.kicker}>Contact</Text>
-      <Text style={styles.line}>{shop.serviceArea}</Text>
-      <Text style={styles.line}>{shop.phoneDisplay}</Text>
+      <Text style={styles.section}>Contact</Text>
+      <Text style={styles.bio}>{shop.serviceArea}</Text>
+      <Text style={styles.phone}>{shop.phoneDisplay}</Text>
       <Text style={styles.muted}>{shop.noEmergencyNote}</Text>
       <Text style={styles.muted}>{shop.emailNote}</Text>
       <Text style={styles.muted}>{shop.instagramNote}</Text>
@@ -80,23 +76,25 @@ export default function AboutScreen() {
 
 const styles = StyleSheet.create({
   kicker: {
-    color: colors.muted,
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 2.4,
+    color: colors.amber,
+    fontFamily: fonts.display,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
   },
   title: {
-    color: colors.white,
-    fontSize: 48,
-    fontWeight: '500',
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 56,
+    fontWeight: '700',
     letterSpacing: -1.6,
-    lineHeight: 52,
+    lineHeight: 54,
   },
   lede: {
-    color: colors.muted,
-    fontSize: 18,
-    lineHeight: 26,
+    color: colors.text,
+    fontSize: 20,
+    lineHeight: 28,
     marginBottom: spacing.sm,
   },
   block: {
@@ -107,21 +105,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
   },
-  rule: {
-    backgroundColor: colors.line,
-    height: 1,
-    marginVertical: spacing.md,
-  },
-  line: {
-    color: colors.text,
+  section: {
+    color: colors.amber,
+    fontFamily: fonts.display,
     fontSize: 16,
-    lineHeight: 26,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginTop: spacing.lg,
+    textTransform: 'uppercase',
+  },
+  work: {
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 24,
+    fontWeight: '700',
+    letterSpacing: -0.4,
+    lineHeight: 30,
+    marginTop: 8,
   },
   muted: {
     color: colors.muted,
     fontSize: 14,
     lineHeight: 20,
-    marginTop: 6,
+    marginTop: 8,
+  },
+  pay: {
+    color: colors.text,
+    fontSize: 16,
+    marginTop: 8,
   },
   hoursRow: {
     flexDirection: 'row',
@@ -131,11 +142,17 @@ const styles = StyleSheet.create({
   },
   hoursDay: {
     color: colors.text,
-    fontWeight: '500',
+    fontWeight: '700',
   },
   hoursTime: {
     color: colors.muted,
     flexShrink: 1,
     textAlign: 'right',
+  },
+  phone: {
+    color: colors.text,
+    fontFamily: fonts.display,
+    fontSize: 28,
+    fontWeight: '700',
   },
 });

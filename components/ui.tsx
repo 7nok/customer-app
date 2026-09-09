@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/icon';
-import { colors, radius, spacing } from '@/constants/theme';
+import { colors, fonts, radius, spacing } from '@/constants/theme';
 import { useWideLayout } from '@/hooks/use-wide-layout';
 
 export function Screen({
@@ -314,20 +314,22 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   eyebrow: {
-    color: colors.amberDeep,
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: 2.2,
+    color: colors.amber,
+    fontFamily: fonts.display,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.text,
-    fontSize: 40,
-    fontWeight: '500',
-    letterSpacing: -1.2,
+    fontFamily: fonts.display,
+    fontSize: 44,
+    fontWeight: '700',
+    letterSpacing: -1.4,
   },
   titleNarrow: {
-    fontSize: 34,
+    fontSize: 36,
   },
   introBody: {
     color: colors.muted,
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderColor: colors.line,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 0,
     padding: spacing.md,
     gap: 10,
   },
@@ -358,17 +360,17 @@ const styles = StyleSheet.create({
     opacity: 0.78,
   },
   primaryLabel: {
-    color: colors.bg,
+    color: colors.white,
     fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.4,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   secondary: {
     alignItems: 'center',
     backgroundColor: 'transparent',
-    borderColor: colors.line,
+    borderColor: colors.text,
     borderRadius: radius.sm,
-    borderWidth: 1,
+    borderWidth: 1.5,
     cursor: 'pointer',
     minHeight: 48,
     justifyContent: 'center',
@@ -459,8 +461,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   chipSelected: {
-    backgroundColor: colors.white,
-    borderColor: colors.white,
+    backgroundColor: colors.amber,
+    borderColor: colors.amber,
   },
   chipDisabled: {
     opacity: 0.4,
@@ -468,9 +470,9 @@ const styles = StyleSheet.create({
   chipLabel: {
     color: colors.text,
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '700',
   },
   chipLabelSelected: {
-    color: colors.bg,
+    color: colors.white,
   },
 });

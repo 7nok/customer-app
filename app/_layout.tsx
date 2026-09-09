@@ -60,7 +60,7 @@ function RootNavigation() {
           options={{ title: 'Appointment windows', presentation: 'card' }}
         />
       </Stack>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
     </>
   );
 }
