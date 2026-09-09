@@ -2,6 +2,7 @@ import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { WebDockPortal } from '@/components/web-dock-portal';
 import { colors } from '@/constants/theme';
 
 const LABELS: Record<string, string> = {
@@ -13,14 +14,14 @@ const LABELS: Record<string, string> = {
 };
 
 /**
- * Floating text capsule. Web bottom inset is 0 — the shell is already pinned
- * to the visible viewport.
+ * Floating text capsule. On web the bar portals into `#app-dock-host` so
+ * first paint sits on the visible viewport bottom (dock-correct-bottom.png).
  */
 export function AppTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const bottomInset = Platform.OS === 'web' ? 10 : Math.max(insets.bottom, 10);
 
-  return (
+  const bar = (
     <View nativeID="app-tab-bar" style={styles.wrap}>
       <View style={styles.pill}>
         {state.routes.map((route, index) => {
@@ -51,6 +52,12 @@ export function AppTabBar({ state, descriptors, navigation }: BottomTabBarProps)
       <View style={{ height: bottomInset }} />
     </View>
   );
+
+  if (Platform.OS === 'web') {
+    return <WebDockPortal>{bar}</WebDockPortal>;
+  }
+
+  return bar;
 }
 
 const styles = StyleSheet.create({
@@ -60,6 +67,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     paddingHorizontal: 14,
     paddingTop: 8,
+    pointerEvents: 'auto',
+    width: '100%',
   },
   pill: {
     backgroundColor: colors.cream,

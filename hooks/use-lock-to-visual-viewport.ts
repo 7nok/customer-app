@@ -1,6 +1,9 @@
 import { useLayoutEffect } from 'react';
 import { Platform } from 'react-native';
 
+import { pinWebDockHost } from '@/components/web-dock-portal';
+import { computeVisibleShellBox } from '@/lib/visible-shell';
+
 declare global {
   interface Window {
     __lockAppToVisualViewport?: () => void;
@@ -8,15 +11,8 @@ declare global {
 }
 
 /**
- * Pin `#root` to the visible box.
- *
- * Grok's in-app browser reports visualViewport.height shorter than innerHeight
- * but offsetTop === 0. Using that height at top:0 leaves a navy hole under the
- * tabs (body shows through) while the URL bar still covers the hero.
- *
- * When offsetTop is 0 and the visual viewport is shorter, treat the leftover
- * as a *top* inset and stretch `#root` to the layout bottom so the tab bar
- * sits flush above the in-app toolbar.
+ * Pin `#root` to the visible box and keep the dock on the layout bottom
+ * when in-app WKWebViews report a short visualViewport with offsetTop 0.
  *
  * Keep in sync with the blocking script in `app/+html.tsx`.
  */
@@ -46,38 +42,19 @@ export function measureVisibleViewport(): void {
       root.style.maxHeight = heightPx;
     }
   }
+
+  pinWebDockHost();
+  window.__lockAppToVisualViewport = measureVisibleViewport;
 }
 
 export function visibleShellBox(): { top: number; height: number; pinToBottom: boolean } {
-  const inner = window.innerHeight || 0;
   const vv = window.visualViewport;
-  const scale = vv?.scale ?? 1;
-  let top = 0;
-  let height = inner;
-  let pinToBottom = true;
-
-  if (vv && scale === 1 && vv.height > 0) {
-    top = vv.offsetTop || 0;
-    height = vv.height;
-    if (top === 0 && inner > height + 1) {
-      top = inner - height;
-      pinToBottom = true;
-    } else if (top > 0) {
-      pinToBottom = false;
-    }
-  }
-
-  if (top < 0) {
-    top = 0;
-  }
-  if (inner > 0 && top + height > inner) {
-    height = Math.max(0, inner - top);
-  }
-  if (height <= 0 && inner > 0) {
-    height = inner - top;
-  }
-
-  return { top, height, pinToBottom };
+  return computeVisibleShellBox({
+    innerHeight: window.innerHeight || 0,
+    visualViewport: vv
+      ? { height: vv.height, offsetTop: vv.offsetTop || 0, scale: vv.scale ?? 1 }
+      : null,
+  });
 }
 
 export function useLockToVisualViewport(): void {
@@ -93,15 +70,23 @@ export function useLockToVisualViewport(): void {
     window.addEventListener('resize', onSync);
     window.addEventListener('orientationchange', onSync);
     window.addEventListener('pageshow', onSync);
+    window.addEventListener('load', onSync);
     document.addEventListener('visibilitychange', onSync);
     vv?.addEventListener('resize', onSync);
     vv?.addEventListener('scroll', onSync);
+
+    const root = document.getElementById('root');
+    const observer =
+      typeof MutationObserver === 'undefined'
+        ? null
+        : new MutationObserver(() => measureVisibleViewport());
+    observer?.observe(root ?? document.body, { childList: true, subtree: true });
 
     let frames = 0;
     let raf = requestAnimationFrame(function poll() {
       measureVisibleViewport();
       frames += 1;
-      if (frames < 60) {
+      if (frames < 180) {
         raf = requestAnimationFrame(poll);
       }
     });
@@ -110,9 +95,11 @@ export function useLockToVisualViewport(): void {
       window.removeEventListener('resize', onSync);
       window.removeEventListener('orientationchange', onSync);
       window.removeEventListener('pageshow', onSync);
+      window.removeEventListener('load', onSync);
       document.removeEventListener('visibilitychange', onSync);
       vv?.removeEventListener('resize', onSync);
       vv?.removeEventListener('scroll', onSync);
+      observer?.disconnect();
       cancelAnimationFrame(raf);
     };
   }, []);
